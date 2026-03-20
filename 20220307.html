@@ -1,0 +1,134 @@
+<html>
+  <head>
+    <title>Chris Reilly's EPFL blog</title>
+    <link rel="icon" type="image/png" href="/epfl/icon.png">
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async>
+      MathJax.Hub.Config({
+	  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+	  TeX: {
+	      Macros: {
+		  bm: ["{\\boldsymbol #1}",1],
+	      }
+	  }
+      });
+    </script>
+  </head>
+  <body style="max-width: 600px; margin: 50;">
+    <h1>2022.03.07 &mdash; kelvin equation</h1>
+    let's consider a (spherical) drop of some homogeneous fluid is floating around in some closed container that is initially evacuated.
+    the drop will begin to evaporate, filling the initially empty space around the drop with a gas composed of the same molecules that make up the drop.
+    this evaporation continues until the rate at which molecules leaving the drop and entering the gas equals the rate of molecules from the gas phase entering the drop.
+    in thermodynamic terms, this occurs when the chemical potentials $\mu_g$ and $\mu_l$ of the gas and liquid phases become equal:
+    $$
+    \mu_g(p_g) = \mu_l(p_l)
+    $$
+    $p_g$ and $p_l$ represent the pressure in the gas and liquid, respectively.
+    for a flat surface these pressures must be equal in thermal equilibrium, and the pressure $p_s$ at which this occurs is known as the "vapor pressure" of the fluid (at a given temperature).
+    for a closed surface, however, these pressures differ by the "laplace pressure" $\Delta p_{LP}$ of the gas-fluid interface:
+    $$
+    p_l - p_g = \Delta p_{LP}
+    $$
+    where
+    $$
+    \Delta p_{LP} = \frac{2 \gamma}{r}
+    $$
+    where $\gamma$ is the surface tension of the interface and $r$ is the radius of the drop.
+    <br>
+    <br>
+    taking into account the laplace pressure, our equilibrium condition can be stated as
+    $$
+    \mu_g(p_g) = \mu_l(p_g+p_{LP}) \tag{1}
+    $$
+    in other words, as a result of the curvature of the gas-liquid interface, the vapor around the drop will not settle at $p_s$ but instead at some different pressure p_g, which we can express as the sum of $p_s$ and some difference $\Delta p_g$.
+    <br>
+    <br>
+    by what amount $\Delta p_g$ then does the vapor pressure change due to the effect of the laplace pressure?
+    we tackle this by analyzing separately the left- and right-hand sides of equation 1. 
+    to begin, we note that, at a fixed temperature, the change $\Delta \mu_g$ in the chemical potential of an ideal gas going from a pressure $p_o$ to $p' \equiv p_o + \Delta p$ is given by
+    $$
+    \Delta \mu_g = RT \ln \frac{p'}{p_o}
+    $$
+    if we assume $\Delta p \ll p_o$ then, using $\ln \left( 1 + x \right) \approx x$ we obtain
+    $$
+    \Delta \mu_g \approx \frac{RT}{p_o} \Delta p = v_o \Delta p
+    $$
+    where $v_o$ is the molar volume of a gas at temperature $T$ and pressure $p_o$.
+    we can therefore tentatively approximate the left-hand side of our equilibrium condition (equation 1) as
+    $$
+    \mu_g(p_g) = \mu_g(p_s + \Delta p_g) = \mu_g(p_s) + v_g \Delta p_g \tag{2}
+    $$
+    where $v_g$ is the molar volume of the gas at temperature $T$ and pressure $p_s$.
+    at the end of the calculation, when we arrive at an expression for $\Delta p_g$, we can analyze the conditions for which the assumption $\Delta p_g \ll p_s$ is valid.
+    <br>
+    <br>
+    next, we use the fundamental equation of calculus:
+    $$
+    \int_a^b \frac{d}{dx} f(x) dx = f(b) - f(a)
+    $$
+    to rewrite the right-hand side of equation 1 as:
+    $$
+    \mu_l(p_g+p_{LP}) = \mu_l(p_s + \Delta p_g + \Delta p_{LP}) = \mu_l(p_s) + \int_{p_s}^{p_s + \Delta p_g + \Delta p_{LP}} \left( \frac{\partial \mu_l}{\partial p} \right)_T dp
+    $$
+    then, from the gibbs-duhem relation for a single component system:
+    $$
+    d\mu = s dT + v dp
+    $$
+    where $s$ and $v$ are respectively the molar entropy and molar volume, we note that $v = \left( \frac{\partial \mu}{\partial p} \right)_T$, so that
+    $$
+    \mu_l(p_g+p_{LP}) = \mu_l(p_s) + \int_{p_s}^{p_s + \Delta p_g + \Delta p_{LP}} v_l dp
+    $$
+    where $v_l$ is the molar volume of the liquid droplet.
+    assuming that $v_l$ is roughly constant with pressure (i.e. the fluid is <i>incompressible</i>), we arrive at
+    $$
+    \mu_l(p_g+p_{LP}) = \mu_l(p_s) + v_l \left(\Delta p_g + \Delta p_{LP}\right) \tag{3}
+    $$
+    ok, now with equations 2 and 3 we have our new forms of the left- and right-hand sides of equations 1, respectively.
+    making these substitutions we obtain
+    $$
+    \mu_g(p_s) + v_g \Delta p_g = \mu_l(p_s) + v_l \left(\Delta p_g + \Delta p_{LP}\right)
+    $$
+    since $p_s$ is defined to be the vapor pressure of the (flat!) gas-fluid interface, we have
+    $$
+    \mu_g(p_s) = \mu_l(p_s)
+    $$
+    so that our equilibrium condition simplifies to
+    $$
+    v_g \Delta p_g = v_l \left(\Delta p_g + \Delta p_{LP}\right)
+    $$
+    solving for $\Delta p_g$ we obtain
+    $$
+    \Delta p_g = \frac{v_l \Delta p_{LP}}{v_g - v_l}
+    $$
+    since liquids are typically much denser than gases (i.e. $v_g \gg v_l$), we can simplify this to
+    $$
+    \Delta p_g = \frac{v_l}{v_g} \Delta p_{LP} \tag{4}
+    $$
+    so we arrive at the simple (and I suppose sensible) result that the increase in vapor pressure due to the laplace pressure is smaller than the laplace pressure by a factor equal to the ratio $\frac{v_g}{v_l}$.
+    to give a sense of scale, for water at room temperature we have a vapor pressure of $\approx \frac{1}{30}$ atmospheres, so that $v_g \approx 30 \times 22 \text{L} \approx 600 \text{L}$  while $v_l \approx 0.02 \text{L}$, so that the change in vapor pressure is about $\frac{600}{0.02} \approx 3 \times 10^4$ times smaller than the laplace pressure.
+    <br>
+    <br>
+    if earlier we had not made the simplification permitted by the assumption $\Delta p_g \ll p_s$, we would have at the end arrived not at equation 4, but rather at the <i>kelvin equation</i>:
+    $$
+    p_g = p_s + \Delta p_g = p_s e^{\frac{2 v_l \gamma}{R T r}}
+    $$
+    you can check that this equation reduces to equation 4 when the exponent is small, i.e. when
+    $$
+    \frac{2 v_l \gamma}{R T r} \ll 1
+    $$
+    so for which droplet radii $r$ is equation 4 valid?
+    for water at room temperature ($v_l \approx 20 \text{mL}$, $\gamma \approx 70 \frac{\text{mN}}{\text{m}}$), you can show that the exponent in the kelvin equation becomes unity at $r \approx 1 \text{nm}$, so that the approximate equation is applicable down to microscopic drop sizes.
+    <br>
+    <br>
+    finally, how can we understand this increase in the vapor pressure in a microscopic sense?
+    as the radius of the drop decreases, the curvature increases.
+    with increasing curvature, the bonding of molecules at the surface is weaker, since the average molecule at the interface has fewer neighbors to bond with.
+    the reduced binding of molecules increases the evaporation rate.
+    since at equilibrium the rate of molecules entering and exiting the interface is equal, the pressure in the gas phase must be higher around a surface to compensate the increased rate of evaporation.
+    <!-- <figure style="width:XXXpx"> -->
+      <!--   <img src="XXX.YYY" style="align:center" width="XXXpx"> -->
+      <!--   <figcaption> -->
+	<!-- 	XXX -->
+	<!--   </figcaption> -->
+      <!-- </figure> -->
+  </body>
+</html>

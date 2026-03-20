@@ -1,0 +1,486 @@
+<html>
+  <head>
+    <title>Chris Reilly's EPFL blog</title>
+    <link rel="icon" type="image/png" href="/epfl/icon.png">
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async>
+      MathJax.Hub.Config({
+	  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+	  TeX: {
+	      Macros: {
+		  bm: ["{\\boldsymbol #1}",1]
+	      }
+	  }
+      });
+    </script>
+  </head>
+  <body style="max-width: 600px; margin: 50;">
+    <h1>2022.03.21 &mdash; mathematics of lockin detection</h1>
+    lockin detection is a experimental technique where, by modulating an otherwise constant signal, one can often significantly improve the signal to noise.
+    intuitively, we can think of the modulation as "shifting" the signal's spectrum to a frequency region where the noise spectrum is weaker.
+    in fact, anytime we assess the strength of a signal by comparing a measurement with the signal "on" and another with the signal "off", we are doing a type of lockin detection.
+    in this post I want to go a bit into the mathematics of lockin detections and present some concrete theorems that are helpful for designing a lockin detection scheme.
+    <br><br>
+    a lockin detector receives a signal $x(t)$ and then performs two operations:
+    <ol>
+      <li>
+	modulates the signal by a sinusoid, producing an output
+	$$
+	x(t) \to x(t)\cos\omega t\,,
+	$$
+	and then
+      </li>
+      <li>
+	low pass filters the output of step 1, producing a final output
+	$$
+	x(t)\cos\omega t \to \int_{-\infty}^{+\infty} dt' x(t') \cos\omega t' g(t-t') \equiv y(t) \tag{1}
+	$$
+	where $g(t)$ is the <i>impulse response</i> of the low pass filter.
+      </li>
+    </ol>
+    conceptually, a filter's impulse response describes the output of a filter to an input consisting of a single brief pulse.
+    more concretely, if a filter with an impulse response $g(t)$ is fed an input of a rectangular pulse of height $x_o$ and width $\delta t$ centered about a time $t_o$, then the filter's output as $\delta t \to 0$ approaches $x_o \delta t g(t-t_o)$.
+    <br><br>
+    filters are perhaps more intuitively conceptualized by their <i>transfer function</i> $\hat{g}(\omega)$, which describes the attenuation of an input sinusoid.
+    in other words, if a filter is fed an input sinusoid $e^{i \omega t}$, then the filter returns an output $\hat{g}(\omega) e^{i \omega t}$.
+    the absolute value $|\hat{g}(\omega)|$ of a transfer function $\hat{g}(\omega)$ of a lockin amplifier is to a good approximation described by the function
+    $$
+    |\hat{g}(\omega)| = 
+    \begin{cases}
+    1 & |\omega| \le \Omega \\
+    0 & |\omega| \gt \Omega
+    \end{cases}
+    $$
+    where $\Omega$ is the <i>cutoff frequency</i> of the filter.
+    the cutoff frequency is related to the filter's <i>time constant</i> $\tau$ by the relation $\Omega = \frac{1}{\tau}$.
+    note here we only describe the absolute value of the transfer function.
+    the <i>phase response</i> $\delta(\omega)$ of the filter (i.e. $\hat{g}(\omega) = |\hat{g}(\omega)|e^{i\delta(\omega)}$) is more complicated, but the results presented here will be independent of the lockin filter's phase response.
+    <br><br>
+    filters are completely and equivalently described by their impulse responses and transfer functions.
+    the two are related by fourier transform:
+    $$
+    \hat{g}(\omega) = \int_{-\infty}^{+\infty} dt e^{i \omega t} g(t)
+    $$
+    with these preliminaries out of the way, we would like to now go on to answer two questions:
+    <ol>
+      <li>
+	what is a lockin detector's response to noise?
+      </li>
+      <li>
+	how quickly does a lockin detector respond to changes in the input?
+      </li>
+    </ol>
+    to answer question 1, we feed a noise input $x(t)$ into the lockin.
+    we characterize the noise by its <i>autocorrelation function</i> $s(\Delta t)$, which is the expectation value of the product of the noise amplitudes at two times $t_1$ and $t_2$:
+    $$
+    s(\Delta t) = \langle x(t_1) x^*(t_2)\rangle
+    $$
+    where $\Delta t \equiv t_2-t_1$.
+    note that we assume here that the expectation value depends only on the different $\Delta t$ between $t_1$ and $t_2$ and not on their average
+    $\bar{t} \equiv \frac{1}{2}\left(t_1 + t_2\right)$.
+    the complex conjugate of $x(t)$ at $t_2$ is done only for mathematical convenience.
+    in the end our signals are always real and there is no difference between $x(t)$ and $x^*(t)$.
+    <br><br>
+    we are interested in the expectation value of the square of the lockin output $\langle y(t) y^*(t) \rangle$ (see equation 1).
+    setting aside the expecation value, we have:
+    $$
+    y(t) y^*(t) =
+    \left(
+    \int dt_1 x(t_1) \cos{\omega t_1} g(t-t_1)
+    \right)
+    \left(
+    \int dt_2 x(t_2) \cos{\omega t_2} g(t-t_2)
+    \right)^*
+    $$
+    after some rearranging:
+    $$
+    y(t) y^*(t) =
+    \int dt_1 \int dt_2 x(t_1)x^*(t_2) \cos{\omega t_1} \cos{\omega t_2} g(t-t_1) g^*(t-t_2)
+    $$
+    taking now the expectation value:
+    $$
+    \langle y(t) y^*(t) \rangle =
+    \left\langle \int dt_1 \int dt_2 x(t_1)x^*(t_2) \cos{\omega t_1} \cos{\omega t_2} g(t-t_1) g^*(t-t_2) \right\rangle
+    \tag{*}
+    $$
+    by the linearity of the expectation value, we can move the angled brackets inside the integrals until they only surround the $x(t_1)x^*(t_2)$ pair, giving
+    $$
+    \langle y(t) y^*(t) \rangle =
+    \int dt_1 \int dt_2 s(\Delta t) \cos{\omega t_1} \cos{\omega t_2} g(t-t_1) g^*(t-t_2)
+    $$
+    where again $\Delta t \equiv t_2-t_1$.
+    next we apply the trig identify
+    $$
+    \cos a \cos b = \frac{1}{2} \left( \cos \left( a - b \right) + \cos \left( a + b \right) \right)
+    $$
+    and euler's identity
+    $$
+    e^{ix} = \cos x + i \sin x
+    $$
+    to rewrite our expression as
+    $$
+    \langle y(t) y^*(t) \rangle = 
+    \frac{1}{4} \int d \Delta t \int d T
+    \left[
+    s(\Delta t)
+    \left(
+    \left(
+    e^{i \omega \Delta t} + e^{- i \omega \Delta t}
+    \right) + 
+    \left(
+    e^{i 2 \omega \bar{t}} + e^{- i 2 \omega \bar{t}}
+    \right)    
+    \right)
+    g(T + \frac{1}{2} \Delta t) g^*(T - \frac{1}{2} \Delta t)
+    \right]
+    $$
+    where $T \equiv t - \bar{t}$, with $\bar{t} \equiv \frac{1}{2} \left( t_1 + t_2 \right)$ as defined aboved.
+    distributing the complex exponentials, we obtain four integrals.
+    we focus for now on the integral associated with the $e^{i \omega \Delta t}$.
+    once we evaluate this integral, the one associated with $e^{-i \omega \Delta t}$ can be obtained simply by substituting $\omega \to -\omega$. 
+    the integrals associated with the terms $e^{\pm i 2\omega \bar{t}}$ are negligible so long as $\omega \gt \Omega$.
+    <br><br>
+    so our task now is to simply the expression
+    $$
+    \frac{1}{4}  
+    \int d \Delta t
+    s(\Delta t) e^{i \omega \Delta t}
+    \int d T
+    g(T + \frac{1}{2} \Delta t) g^*(T - \frac{1}{2} \Delta t)
+    \tag{2a}
+    $$
+    we tackle first the inside integral
+    $$
+    \int d T
+    g(T + \frac{1}{2} \Delta t) g^*(T - \frac{1}{2} \Delta t)
+    \tag{2b}
+    $$
+    to do this we first make use of the equation
+    $$
+    \int dt f(t) g^*(t) = \frac{1}{2\pi}\int d\omega \hat{f}(\omega) \hat{g}^*(\omega) \tag{3}
+    $$
+    where $\hat{y}(\omega)$ is the fourier transform of a function $y(t)$:
+    $$
+    \hat{y}(\omega) = \int dt y(t) e^{i \omega t}
+    $$
+    note here that this normalization convention is required in order to make the transfer function coincide with the fourier transform of the impulse response.
+
+    to prove equation , we first introduce another identity
+    $$
+    \int dt e^{i \omega t} = 2 \pi \delta(\omega) \tag{4}
+    $$
+    where $\delta(\omega)$ is the dirac delta function.
+    to prove equation 4, we note that, for any function $\hat{f}(\omega)$
+    $$
+    \begin{aligned}
+    \int d \omega \hat{f}(\omega) \left( \int dt e^{i\omega t} \right)
+    & =
+    \int dt \int d\omega \left( \hat{f}(\omega) e^{i\omega t} \right)
+    \\
+    & =
+    2 \pi \int dt
+    \left(
+    \frac{1}{2\pi}
+    \int d\omega \left( \hat{f}(\omega) e^{-i \omega \left( - t \right)} \right)
+    \right)
+    \\
+    & =
+    2 \pi \int dt f(-t)
+    \\
+    & =
+    2 \pi \int dt f(t) e^{i (0) t}
+    \\
+    & =
+    2 \pi \int dt f(t) e^{i (0) t}
+    \\
+    & =
+    2 \pi \hat{f}(0) 
+    \end{aligned}
+    \tag{5}
+    $$
+    where $f(t)$ is the inverse fourier transform of $\hat{f}(\omega)$:
+    $$
+    f(t) =
+    \frac{1}{2\pi}
+    \int d\omega \hat{f}(\omega) e^{-i \omega t}
+    \tag{6}
+    $$
+    equation 5 thus shows that $\frac{1}{2 \pi} \int dt e^{i \omega t}$ satisfies the defining property of the dirac delta function, thus proving equation 4.
+    <br><br>
+    having established equation 4, we start our proof of equation 3 by applying equation 5 to $f(t)$ and $g(t)$, obtaining
+    $$    
+    \int dt f(t) g^*(t) =
+    \int dt
+    \left(
+    \frac{1}{2\pi}
+    \int d\omega_f \hat{f}(\omega_f) e^{-i \omega_f t}
+    \right)
+    \left(
+    \frac{1}{2\pi}
+    \int d\omega_g \hat{g}(\omega_g) e^{-i \omega_g t}
+    \right)^*
+    $$
+    shuffling around the integrals, we obtain
+    $$
+    \int dt f(t) g^*(t)
+    =
+    \left(\frac{1}{2\pi}\right)^2
+    \int d \omega_f \hat{f}(\omega_f)
+    \int d \omega_g \hat{g}^*(\omega_g)
+    \left[ \int d t e^{i \left( \omega_g - \omega_f \right) t} \right]
+    $$
+    applying now equation 4 to the bracketing expression:
+    $$
+    \begin{align}
+    \int dt f(t) g^*(t)
+    & =
+    \left(\frac{1}{2\pi}\right)^2
+    \int d\omega_f \hat{f}(\omega_f)
+    \int d\omega_g \hat{g}^*(\omega_g)
+    \left[ 2 \pi \delta\left(\omega_g - \omega_f\right) \right]
+    \\
+    & =
+    \frac{1}{2\pi}
+    \int d \omega_f \hat{f}(\omega_f) \hat{g}^*(\omega_f)
+    \\
+    & =
+    \frac{1}{2\pi}
+    \int d\omega \hat{f}(\omega) \hat{g}^*(\omega)
+    \end{align}
+    $$
+    thus completing the proof of equation 3.
+    <br><br>
+    Now we introduce the useful fourier "shift" theorem:
+    $$
+    \begin{align}
+    \int dt f(t-t_o) e^{i \omega t}
+    & = \int d(t-t_o) f(t-t_o) e^{i \omega (t - t_o + t_o)}
+    \\
+    & = \int d(t-t_o) f(t-t_o) e^{i \omega (t - t_o) + i \omega t_o}
+    \\
+    & = \int d(t-t_o) f(t-t_o) e^{i \omega (t - t_o)}e^{i \omega t_o}
+    \\
+    & = e^{i \omega t_o} \int d(t-t_o) f(t-t_o) e^{i \omega (t - t_o)}
+    \\
+    & = e^{i \omega t_o} \int dt f(t) e^{i \omega t}
+    \\
+    & = 
+    e^{i\omega t_o} \hat{f}(\omega)
+    \tag{7}
+    \end{align}
+    $$
+    returning to our attack on the integral in equation 2b, we apply simultaneously equations 3 and 7:
+    $$
+    \begin{align}
+    \int d T
+    g(T + \frac{1}{2} \Delta t) g^*(T - \frac{1}{2} \Delta t)
+    & =
+    \frac{1}{2\pi}
+    \int d\omega'
+    e^{i\omega' \left( - \frac{1}{2} \Delta t \right)} \hat{g}(\omega')
+    \left(
+    e^{i\omega' \left( + \frac{1}{2} \Delta t \right)} \hat{g}(\omega')
+    \right)^*
+    \\
+    & =
+    \frac{1}{2\pi}
+    \int d\omega'
+    e^{i\omega' \left( - \frac{1}{2} \Delta t \right)} \hat{g}(\omega')
+    e^{i\omega' \left( - \frac{1}{2} \Delta t \right)} \hat{g}^*(\omega')
+    \\
+    & = 
+    \frac{e^{-i\omega' \Delta t}}{2\pi}
+    \int d\omega'
+    \hat{P}_g(\omega')
+    \end{align}
+    \tag{8}
+    $$
+    where $\hat{P}_g(\omega) \equiv |\hat{g}(\omega)|^2$ is known as the <i>power spectrum</i> of the impulse response $g(t)$.
+    <br><br>
+    substituting equation 8 into equation 2a, we obtain
+    $$
+    \begin{align}
+    \frac{1}{4}  
+    \int d \Delta t
+    s(\Delta t) e^{i \omega \Delta t}
+    \left[
+    \frac{e^{-i\omega' \Delta t}}{2\pi}
+    \int d\omega'
+    \hat{P}_g(\omega')
+    \right]    
+    & =
+    \frac{1}{4} \frac{1}{2 \pi}  
+    \int d\omega'
+    \hat{P}_g(\omega')
+    \left[
+    \int d \Delta t
+    s(\Delta t)
+    e^{i \left(\omega - \omega'\right) \Delta t}
+    \right]
+    \\
+    & =
+    \frac{1}{4} \frac{1}{2 \pi}  
+    \int d\omega'
+    \hat{P}_x(\omega')
+    \hat{P}_s(\omega - \omega')
+    \\
+    & =
+    \frac{1}{4} \frac{1}{2 \pi} 
+    \left(
+    \hat{P}_x * \hat{P}_g
+    \right)\left(\omega\right)
+    \end{align}
+    $$
+    where $\hat{P}_x(\omega)$ is the fourier transform of $s(\Delta t)$, which turns out, via the <a href="https://en.wikipedia.org/wiki/Wiener%E2%80%93Khinchin_theorem" title="Wiener Khinchin theorem">Wiener Khinchin theorem</a>, to be equal to the power spectrum of a noise signal $x(t)$ with autocorrelation function $\langle x(t_1) x^*(t_2) \rangle = s(\Delta t)$.
+    $\left(\hat{f} * \hat{g} \right)(\omega)$ denotes the <i>convolution</i> of two functions $\hat{f}(\omega')$ and $\hat{g}(\omega')$, evaluated at $\omega$.
+    <br><br>
+    since $x(t)$ and $g(t)$ are real functions, their fourier transforms satisfy the property $\hat{f}(-\omega) = \hat{f}^*(\omega)$, and so their power spectrums satisfy $\hat{P}_f(-\omega) = \hat{P}_f(\omega)$.
+    the convolution of $\hat{P}_x(\omega)$ and $\hat{P}_g(\omega)$ will have the same property, which implies that the integral in equation 2a will be unchanged under a substitution $\omega \to -\omega$.
+    therefore our orignal expression for $\langle y(t)y^*(t) \rangle$, retaining our neglect of the integrals associated with the $e^{\pm i 2 \omega \bar{t}}$, becomes
+    $$
+    \begin{align}
+    \langle y(t)y^*(t) \rangle
+    & =
+    2
+    \left(
+    \frac{1}{4} \frac{1}{2 \pi} 
+    \left(
+    \hat{P}_x * \hat{P}_g
+    \right)\left(\omega\right)
+    \right)
+    \\
+    & =
+    \frac{1}{4 \pi}
+    \left(
+    \hat{P}_x * \hat{P}_g
+    \right)\left(\omega\right)
+    \end{align}
+    $$
+    in others words, the rms noise output
+    $\delta y \equiv \sqrt{\langle y(t)y^*(t) \rangle}$
+    of lockin amplifier is
+    $$
+    \delta y = \sqrt{
+    \frac{1}{4 \pi}
+    \left(
+    \hat{P}_x * \hat{P}_g
+    \right)\left(\omega\right)
+    }
+    \tag{9}
+    $$
+    from this expression, it is clear that reducing the lockin's cutoff frequency $\Omega$ of $\hat{g}(\omega)$ (or, equivalently, increasing its time constant $\tau$) will narrow the power spectrum $\hat{P}_g$ (in fact, in our approximation, good for a typical lockin amplifier, we have $\hat{P}_g(\omega) = |\hat{g}(\omega)|$), which will in turn reduce the lockin's sensitivity to noise.
+    we may wonder, then, why one does not make the lockin time constant $\tau$ arbitrarily large.
+    the answer is that a large time constant will make the lockin very slow to react to changes in the input.
+    to see this, let's feed to the input of the lockin a signal $x(t)$ that, on short time scales, oscillates at the lockin's modulation frequency $\omega$, but whose amplitude is slowly modulated at a frequency $\Omega'$, i.e.
+    $$
+    x(t) = x_o \cos{\Omega' t}\cos{\omega t}
+    $$
+    the lockin output given this input will be
+    $$
+    \begin{align}
+    y(t)
+    & = \int dt' x(t') \cos{\omega t'} g(t-t')
+    \\
+    & = \int dt' \left( x_o \cos{\Omega' t'}\cos{\omega t'} \right) \cos{\omega t'} g(t-t')
+    \end{align}
+    $$
+    applying a trig identity introduced earlier, we note that:
+    $$
+    \cos^2{\omega t} = \frac{1}{2} \left( 1 + \cos{2\omega t} \right)
+    $$
+    the term oscillating at $2 \omega$ can be neglected when $\omega \gt \Omega$, as we asserted earlier for the $e^{i 2\omega \bar{t}}$ terms.
+    the expression for the lockin output then simplifies to
+    $$
+    y(t)
+    = \frac{x_o}{2} \int dt' \cos{\Omega' t'} g(t-t')
+    $$
+    the integral though is just the response of a filter with impulse response $g(t)$ to a sinusoid oscillating at $\Omega'$, which we said earlier is given by a simple scaling of the input by a factor $\hat{g}(\Omega')$, yielding
+    $$
+    y(t) = \frac{x_o}{2} \hat{g}(\Omega') \cos{\Omega' t}
+    \tag{10}
+    $$
+    so we see that the lockin is unable to respond to changes in the input occuring on time scales $\tau' = \frac{1}{\Omega'}$ faster than $\tau = \frac{1}{\Omega}$.
+    <hr>
+    <h2>
+      field tests
+    </h2>
+    I tested formula 9 out on an SRS 830 lockin ampliflier. 
+    I fed to the lockin's DC-coupled input a 100 mV RMS white noise source with $f_{co} = \frac{\omega_{co}}{2 \pi} = 60 \text{MHz}$ bandwidth. 
+    Using a BNC-tee I terminated the (otherwise high impedance) lockin input with a 50 Ohm terminator. 
+    I verified that, by feeding the same noise source to a 50 Ohm terminated oscilloscope input, 
+    one obtains a spectrum that is flat out to 60 MHz and gives an RMS reading of 100 mV. 
+    <br><br>
+    taking the variances of 1000 sample datasets with and without the noise source connected to the input, 
+    I obtain a lockin response to the noise source of $\delta y = 1.4 \text{mV RMS}$. 
+    what do we expect, given formula 9? 
+    the relevant lockin parameters for the measurement are:
+    <ul>
+      <li>
+        modulation frequency $f_o = \frac{\omega_o}{2 \pi} = 100 \text{kHz}$
+      </li>
+      <li>
+        time constant: $\tau = \frac{1}{\Omega} = 10 \mu\text{s}$
+      </li>
+    </ul>
+    it is hard to measure precisely the shape of the input noise spectrum, so let's assume it is of the form
+    $$
+    \hat{P}_s(\omega) = \frac{\hat{P}_o}{1 + \left(\frac{\omega}{\omega_{co}}\right)^2}
+    $$    
+    the RMS input noise $P_o = \left(100 \text{mV}\right)^2$ is equal to $\langle x^2(t) \rangle = s(0)$, so that
+    $$
+    \begin{align}
+    P_o 
+    & = 
+    s(0) 
+    \\ 
+    & = 
+    \frac{1}{2 \pi} \int_{-\infty}^{+\infty} d \omega \hat{P}_s(\omega) e^{-i \omega \left(0\right)}
+    \\
+    & = 
+    \frac{\hat{P}_o}{2 \pi} \int \frac{d\omega}{1 + \left(\frac{\omega}{\omega_o}\right)^2}
+    \\
+    & = 
+    \hat{P}_o \frac{\omega_{co}}{2 \pi} \int \frac{dx}{1 + x^2}
+    \\
+    & = 
+    \hat{P}_o \frac{\omega_{co}}{2 \pi} f_{co} \pi
+    \\
+    & = 
+    \frac{\hat{P}_o \omega_{co}}{2}
+    \end{align}
+    $$
+    so, in other words:
+    $$
+    \hat{P}_o = 2 \frac{P_o}{\omega_{co}}
+    $$    
+    since $\omega_{co} \gg \omega_o$, $\hat{P}_s(\omega) \approx \hat{P}_o$ to a very good approximation over the integration region 
+    $\omega_o - \Omega \lt \omega \lt \omega_o + \Omega$, 
+    we obtain immediately from equation 9 the result
+    $$
+    \delta y = \sqrt{ \frac{1}{4\pi} \times 2 \Omega \times \hat{P}_o} \approx 0.9 \text{mV RMS}
+    $$    
+    though this is the same order of magnitude as the observed value of 1.4 mV RMS, 
+    the deviation is not explainable by any uncertainties in the analysis, 
+    suggesting some flaw in our assumptions or calculations. 
+    <br><br>
+    the most obvious source of error is our assumption of $\Omega = \frac{1}{\tau}$, 
+    since I do not know if this convention relating time constants and cutoff frequencies still holds for higher older filters. 
+    looking carefully at the manual for the lockin amplifier, they claim that the RMS noise can be calculated by the relation
+    $$
+    \delta y^2 = \Delta f_{ENBW} \tilde{P}_o
+    $$
+    where $\Delta f_{ENBW}$ is a "equivalent noise bandwidth" given by $\frac{5}{64 \tau}$ by the 24 decibel per octave low pass output filter use in the measurement, and 
+    $\tilde{P}_o$ is the power spectral density in frequency space, 
+    which is related to the $\omega$ space power spectral density $\hat{P}_o$ by $\tilde{P}_o = 2 \pi \hat{P}_o$. 
+    this suggests that, for the 24 decibel per octave filter, we must modify the relation $\Omega = \frac{1}{\tau}$ to $\Omega' = \alpha \frac{1}{\tau}$ so that 
+    $$
+    \frac{1}{4\pi} \times 2 \Omega' \times \hat{P}_o = \delta y^2 = \Delta f_{ENBW} \tilde{P}_o
+    $$
+    or 
+    $$
+    \alpha = \frac{\left(2 \pi\right)^2 5}{64} \approx 3.1
+    $$
+    this implies that our original calculation underestimates the output noise by a factor of approximately $\sqrt{3.1} \approx 1.76$. 
+    making this correction, we get an expected noise of $\delta y = 1.76 \times 0.9 \text{mV RMS} \approx 1.6 \text{mV RMS}$, 
+    which is significantly closer to the measured value of 1.4 mV RMS. 
+  </body>
+</html>

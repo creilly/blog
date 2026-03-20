@@ -1,0 +1,200 @@
+<html>
+  <head>
+    <title>Chris Reilly's EPFL blog</title>
+    <link rel="icon" type="image/png" href="/epfl/icon.png">
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async>
+      MathJax.Hub.Config({
+        tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+        TeX: {
+          Macros: {
+            bm: ["{\\boldsymbol #1}",1],
+          },
+          equationNumbers: { autoNumber: "AMS" }
+        }
+      });
+    </script>
+  </head>
+  <body style="max-width: 600px; margin: 50;">
+    <h1>2022.03.25 &mdash; discrete fourier transform and lockin detection</h1>
+    here we continue our discussion, started <a href="20220321.html">earlier this week</a>, of our mathematical analysis of lockin detection. 
+    we focus in this post on how to apply equation 9 of that post when we have an autocorrelation $s(t)$ defined only at discrete time separations 
+    $t = 0, \Delta t, 2 \Delta t, \ldots, N \Delta t$, i.e. some discrete series of values $s_0, s_1, \ldots, s_N$.
+    <br><br>
+    suppose we take a series of $2N+1$ measurements of some voltage $v_1,\ldots,v_{2N+1}$ spaced by a fixed time interval $\Delta t$. 
+    what follows will hold for a general series of measurements, but ultimately we will be interested in the case where
+    \begin{equation}
+    \label{ac}
+    \left(v_1,v_2,\ldots,v_{N+1},\ldots,v_{2N},v_{2N +1}\right) = \left(s_{N},s_{N-1},\ldots,s_{0},\ldots,s_{N-1},s_{N}\right)
+    \end{equation}
+    anyways, for any series $v_n$ of length $2N + 1$ we can define a function $v(t)$ of a continuous time variable $t$
+    \begin{equation}    
+    v(t) = \sum_{m=-N}^{+N} \hat{v}_m e^{-i 2 \pi \frac{m}{(2N+1)\Delta t} t}
+    \label{idft}
+    \end{equation}
+    where
+    \begin{equation}    
+    \hat{v}_m = \frac{1}{2N + 1}\sum_{n=1}^{2N+1} v_n e^{i 2 \pi \frac{nm}{2N +1}}
+    \label{dft}
+    \end{equation}
+    so that the function $v(t)$ evaluated at a time $t = n\Delta t$ is equal to the <i>n</i><sup>th</sup> measurement $v_n$:
+    \begin{equation*}
+      \begin{split}
+        v(n \Delta t) 
+        & = 
+        \sum_m \hat{v}_m e^{-i 2 \pi \frac{m}{(2N+1)\Delta t} n \Delta t} 
+        \\
+        & = 
+        \sum_m \hat{v}_m e^{-i 2 \pi \frac{mn}{(2N+1)}} 
+        \\
+        & = 
+        \sum_m  \sum_{n'} \frac{1}{2N +1} v_{n'} e^{i 2 \pi \frac{n'm}{2N +1}} e^{-i 2 \pi \frac{mn}{(2N+1)}} 
+        \\
+        & = 
+        \sum_m  \sum_{n'} \frac{1}{2N +1} v_{n'} e^{i 2 \pi \frac{\left(n'-n\right)m}{2N +1}}
+        \\
+        & = 
+        \sum_{n'} \frac{1}{2N +1} v_{n'} \left(\sum_{m=1}^{2N+1} e^{i 2 \pi \frac{\left(n'-n\right)m}{2N +1}}\right)
+        \\
+        (!) & = 
+        \sum_{n'} \frac{1}{2N +1} v_{n'} \left( \left(2N + 1\right)\delta_{nn'}\right)
+        \\
+        & = 
+        v_n
+      \end{split}    
+    \end{equation*}
+    for an explanation of the step marked (!), see the footnote of <a href="https://chris.reillybrothers.net/blog/20190521.html#1b">https://chris.reillybrothers.net/blog/20190521.html</a>. 
+    in the line before the (!) we change the limits for the $m$ sum from those defined in equation \ref{idft} by exploiting the property $\hat{v}_{m + \left(2N + 1\right)} = \hat{v}_m$. 
+    <br><br>
+    what is the fourier transform $\hat{v}(\omega)$ of $v(t)$?
+    \begin{equation}      
+      \begin{split}
+        \hat{v}(\omega) 
+        & = 
+        \int_{-\infty}^{+\infty} d t v(t) e^{i \omega t} 
+        \\
+        & = 
+        \int_{-\infty}^{+\infty} d t 
+        \left(
+          \sum_m \hat{v}_m e^{-i 2 \pi \frac{m}{(2N+1)\Delta t} t} 
+        \right) 
+        e^{i \omega t} 
+        \\
+        & = 
+        \sum_m
+        \hat{v}_m
+        \int_{-\infty}^{+\infty} d t 
+          e^{
+            i \left( 
+              \omega - 2 \pi \frac{m}{(2N+1)\Delta t} 
+            \right) 
+            t
+          }          
+        \\
+        & = 
+        \sum_m
+        \hat{v}_m
+        \left(
+          2 \pi \delta \left( 
+            \omega - \omega_m
+          \right) 
+        \right)
+        \\
+        & = 
+        2 \pi
+        \sum_m
+        \hat{v}_m
+        \delta \left( 
+          \omega - \omega_m
+        \right)
+      \end{split}
+      \label{ft}
+    \end{equation}
+    where 
+    \begin{equation}
+      \omega_m = 2 \pi \frac{m}{(2N+1)\Delta t} = m \Delta \omega
+    \end{equation}    
+    so we find that the fourier transform of $v(t)$ is a comb of delta functions from $\omega_{-N}$ to $\omega_{+N}$ spaced by $\Delta \omega$. 
+    <br><br>
+    letting $v_n$ take the values as indicated in equation \ref{ac}, 
+    the fourier transform $\hat{v}(\omega)$ becomes the power spectral density $P_s(\omega)$, 
+    so that, according to equation 9 from <a href="20220321.html">2022-03-21</a>, 
+    the root-mean-squared deviation $\delta y$ of the lockin output from a noise input with autocorrelation $s(t)$,
+    estimated with a time series $s_n$ at time separations $\Delta t$, can be written as
+    \begin{equation}
+      \label{spiky}
+      \begin{split}
+        \delta y 
+        & = \sqrt{
+          \frac{1}{4 \pi}
+          \left( P_s * P_g \right)(\omega)
+        } 
+        \\
+        & = \sqrt{
+          \frac{1}{4 \pi}
+          \left(
+            2 \pi \sum_{m}' \hat{v}_m
+          \right)
+        } 
+        \\
+        & = \sqrt{
+          \frac{1}{2}
+          \sum_{m}' \hat{v}_m          
+        } 
+        \\
+      \end{split}
+    \end{equation}
+    where $\sum_{m}'$ denotes a restricted sum over the values $m$ such that $|\omega_m - \omega_o| < \Omega$, 
+    where $\omega_o$ is the lockin modulation frequency and $\Omega = \frac{1}{\tau}$, 
+    where $\tau$ is the lockin time constant. 
+    <br><br>
+    we can also replace the delta functions $\delta(\omega - \omega_m)$ by rectangles of unit area and width $\Delta \omega$ centered about $\omega_m$, 
+    thus obtaining a "filled out" power spectral density $\tilde{P}_s(\omega)$ where 
+    \begin{equation}
+    \label{filledout}
+    \tilde{P}_s(\omega) = 2 \pi \frac{\hat{v}_m}{\Delta \omega}
+    \end{equation}
+    where $m$ minimizes the distance $|\omega - \omega_m|$. 
+    this form of the power spectral density has more visual appeal, since we can obtain $\delta y$ by:
+    <ol>
+      <li>
+        integrating $\tilde{P}_s(\omega)$ 
+        (which should be a relatively smooth function to the extent that $\Delta \omega$ is small) 
+        from $\omega_o - \Omega$ to $\omega_o + \Omega$, then
+      </li>  
+      <li>
+        dividing the result by $4 \pi$, and finally
+      </li>
+      <li>
+        taking the square root
+      </li>
+    </ol>
+    for completeness and convience we include the formula for estimating $\delta y$ in terms of frequency. 
+    the "spiky" power spectral density $\bar{P}_s(f)$, in units of V<sup>2</sup> per Hz, 
+    is identical in form to the associated radial frequency ($\omega$) expression (see equation \ref{ft}):
+    \begin{equation}
+      \bar{P}_s(f) 
+      = 2 \pi \sum_m \hat{v}_m \delta \left( 
+        f - f_m
+      \right)
+    \end{equation}
+    where $f_m = m \Delta f$ and $\Delta f = \frac{\Delta \omega}{2 \pi} = \frac{1}{(2N + 1) \Delta t}$. 
+    the associated expression for $\delta y$ is also identical to the $\omega$ case:
+    \begin{equation}
+      \delta y = \sqrt{
+        \frac{1}{2}
+        \sum_{m}' \hat{v}_m          
+      } 
+    \end{equation}
+    where now the sum extends over values $m$ where $|f_m - f_o| < f_{\tau}$, 
+    where $f_o = \frac{\omega_o}{2 \pi}$ 
+    and $f_{\tau} = \frac{\Omega}{2 \pi}$. 
+    <br><br>
+    for the "filled out" power spectral density $\tilde{\bar{P}}_s(f)$ we need only make the substitution 
+    $\Delta \omega \to \Delta f$, i.e. 
+    \begin{equation}
+    \tilde{\bar{P}}_s(\omega) = 2 \pi \frac{\hat{v}_m}{\Delta f}
+    \end{equation}
+    the procedure for obtaining $\delta y$ from $\tilde{\bar{P}}_s(f)$ is identical to that of $\tilde{P}_s(f)$, 
+    though our new integration limits now run from $f_o - f_{\tau}$ to $f_o + f_{\tau}$.
+  </body>
+</html>

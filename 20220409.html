@@ -1,0 +1,548 @@
+<html>
+  <head>
+    <title>Chris Reilly's EPFL blog</title>
+    <link rel="icon" type="image/png" href="/epfl/icon.png">
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async>
+      MathJax.Hub.Config({
+        tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+        TeX: {
+          Macros: {
+            bm: ["\\boldsymbol{#1}",1],
+            bra: ['\\langle #1 |',1],
+            ket: ['| #1 \\rangle',1],
+            ip: ['\\langle {#1} | {#2} \\rangle',2],
+            op: ['| {#1} \\rangle \\langle {#2} |',2],
+            ev: ['\\langle {#1} \\rangle',1],
+            comm: ['\\left[#1,#2\\right]',2]
+          },
+          equationNumbers: { autoNumber: "AMS" }
+        }
+      });
+    </script>
+  </head>
+  <body style="max-width: 600px; margin: 50;">
+    <h1>2022.04.09 &mdash; two level system driven with noise</h1>
+    <i>last update: 2023.01.20</i>
+    <br><br>
+    in this post I want to collect some results / formulas concerning population transfer between two quantum states. 
+
+    <h2>dynamical equations</h2>
+
+    we assume that the hamiltonian $h$ governing the system dynamics is composed of a time independent "unperturbed" part $h_o$ 
+    and a time dependent "perturbation" $h'$, i.e. 
+    \begin{equation}
+        h = h_o + h'
+    \end{equation}
+    let $\ket{-}$ and $\ket{+}$ be respectively the low and high energy eigenstates of $h_o$, i.e.
+    \begin{equation}
+        h_o = \Delta \epsilon \sigma_z
+    \end{equation}
+    where
+    \begin{equation}
+        \sigma_z = \op{+}{+} - \op{-}{-}
+    \end{equation}
+    is the $z$ pauli matrix, so that the energy separation between $\ket{+}$ and $\ket{-}$ is 
+    \begin{equation}
+        \bra{+} h_o \ket{+} - \bra{-} h_o \ket{-} = 2 \Delta \epsilon
+    \end{equation}
+    the perturbation $h'$ has the form
+    \begin{equation}
+        h' = \epsilon(t) \sigma_x
+    \end{equation}
+    where 
+    \begin{equation}
+        \sigma_x = \op{+}{-} + \op{-}{+}
+    \end{equation}
+    is the $x$ pauli matrix, and
+    \begin{equation}
+        \epsilon(t) = \epsilon_o \cos{\phi(t)}
+    \end{equation}
+    where $\epsilon_o$ is some constant and
+    \begin{equation}
+        \phi(t) = \phi_o + \int_{t_o}^\infty dt' \omega(t')
+    \end{equation}
+    where $\phi_o$ is the phase of the perturbation at $t=t_o$ and 
+    \begin{equation}
+        \omega(t) = \omega_o + \Delta \omega + \delta \omega(t)
+    \end{equation}
+    where 
+    \begin{equation}
+        \hbar \omega_o = 2 \Delta \epsilon
+        \label{omegao}
+    \end{equation}
+    and $\Delta \omega$ is some fixed "detuning", 
+    while $\delta \omega(t)$ is a randomly fluctuating phase with the following statistical properties
+    \begin{align}        
+        \mathbb{E} \left[ \delta \omega(t) \right] & = 0 \\
+        \mathbb{E} \left[ \delta \omega(t_1) \delta \omega(t_2) \right] & = 2 \gamma \delta(t_1 - t_2)
+    \end{align}
+    where $\mathbb{E}\left[ \cdot \right]$ denotes a (classical) expectation value, $\gamma$ is a constant and $\delta(t)$ is the dirac delta function.
+    by the way, if we want to, we can write the total hamiltonian $h$ in the following, somewhat more "geometric" form
+    \begin{equation}
+        h = \bm{h} \cdot \bm{\sigma}
+    \end{equation}
+    where 
+    \begin{equation}
+        \bm{h} = \left( h_x,h_y,h_z \right) = \left( \epsilon(t),0,\Delta \epsilon \right)
+    \end{equation}
+    and
+    \begin{equation}
+        \bm{\sigma} = \left( \sigma_x,\sigma_y,\sigma_z \right)
+    \end{equation}
+    <br><br>
+    given a state $\ket{\psi(t)}$, we can define amplitudes $c_\pm(t)$ by the rule
+    \begin{equation}
+        c_\pm (t) = \ip{\pm}{\psi(t)}  e^{\pm i \frac{\phi(t)}{2}}
+    \end{equation}
+    if $\ket{\psi (t)}$ satisfies the schrodinger equation, 
+    i.e. $\frac{d}{dt} \ket{\psi(t)} = \left(i \hbar\right)^{-1} h \ket{\psi(t)}$, 
+    then the $c_\pm(t)$ satisfy the equation:    
+    \begin{equation}        
+        \begin{split}
+            \frac{d}{dt} c_\pm(t)
+            & = 
+            \ip{\pm}{\dot{\psi}} e^{\pm i \frac{\phi(t)}{2}} + \ip{\pm}{\psi(t)} \frac{d}{dt} e^{\pm i \frac{\phi(t)}{2}}
+            \\
+            & = \bra{\pm} \left[ \left(i \hbar\right)^{-1} h \pm \frac{i}{2} \frac{d}{dt} \phi(t) \right] \ket{\psi} e^{\pm i \frac{\phi(t)}{2}}
+            \\
+            & = \bra{\pm} \left[ \left(i \hbar\right)^{-1} h + \frac{i}{2} \frac{d}{dt} \phi(t) \sigma_z \right] \ket{\psi} e^{\pm i \frac{\phi(t)}{2}}
+        \end{split}
+        \label{cpm}
+    \end{equation}
+    inspecting the bracketed expression, we find
+    \begin{equation}
+        \begin{split}
+            & 
+            \left(i \hbar\right)^{-1} h + \frac{i}{2} \frac{d}{dt} \phi(t) \sigma_z
+            \\
+            = &        
+            \left(i \hbar\right)^{-1} \left( h_o + h' \right) + \frac{i}{2} \frac{d}{dt} \phi(t) \sigma_z
+            \\
+            = &
+            \left(i \hbar\right)^{-1} \left( \Delta \epsilon \sigma_z + \epsilon(t) \sigma_x \right) + \frac{i}{2} \frac{d}{dt} \phi(t) \sigma_z
+            \\
+            = &
+            \left(i \hbar\right)^{-1} \left( \Delta \epsilon \sigma_z + \epsilon(t) \sigma_x \right) 
+            + 
+            \frac{i}{2} \left( \omega_o + \Delta \omega + \delta \omega(t) \right) \sigma_z
+            \\
+            = &
+            i \left( 
+                \left(
+                    \frac{\omega_o}{2} - \frac{\Delta \epsilon}{\hbar} 
+                    + 
+                    \frac{1}{2} \left(\Delta \omega + \delta \omega(t)\right)
+                \right) \sigma_z - \frac{\epsilon(t)}{\hbar} \sigma_x 
+            \right) 
+            \\
+            (!) = &
+            i \left( 
+                \frac{1}{2} \left(\Delta \omega + \delta \omega(t)\right) \sigma_z - \frac{\epsilon(t)}{\hbar} \sigma_x 
+            \right)         
+        \end{split}
+    \end{equation}    
+    where in the step marked (!) we apply equation \eqref{omegao}. inserting this expression back into equation \eqref{cpm}, we get
+    \begin{equation}                
+        \begin{split}
+            \frac{d}{dt} c_\pm(t) 
+            & = 
+            \bra{\pm} \left[            
+                i \left( 
+                    \frac{1}{2} \left(
+                        \Delta \omega + \delta \omega(t)
+                    \right) \sigma_z - \frac{\epsilon(t)}{\hbar} \sigma_x 
+                \right) 
+            \right] \ket{\psi} e^{\pm i \frac{\phi(t)}{2}}        
+            \\
+            & = 
+             \left( i \hbar \right)^{-1} \left(
+                \mp \frac{1}{2} \hbar \left(
+                    \Delta \omega + \delta \omega(t)
+                \right) c_\pm(t)
+                + \left[
+                \bra{\pm} \epsilon(t) \sigma_x \ket{\psi(t)} e^{\pm i \frac{\phi(t)}{2}}
+            \right]
+            \right)
+        \end{split}
+        \label{hp}
+    \end{equation}
+    zooming in now on the bracketed expression:
+    \begin{equation}                
+        \begin{split}
+            & 
+            \bra{\pm} \epsilon(t) \sigma_x \ket{\psi(t)} e^{\pm i \frac{\phi(t)}{2}}            
+            \\
+            = &
+            \bra{\mp} \epsilon_o \cos \phi(t) \ket{\psi(t)} e^{\pm i \frac{\phi(t)}{2}}            
+            \\
+            = &
+            \bra{\mp} \epsilon_o \cos \phi(t) \ket{\psi(t)} e^{\pm i \frac{\phi(t)}{2}}            
+            \\
+            = &
+            \bra{\mp} \epsilon_o 
+            \frac{1}{2}            
+            \left(
+                e^{i\phi(t)} + e^{-i\phi(t)}
+            \right) 
+            \ket{\psi(t)} e^{\pm i \frac{\phi(t)}{2}}            
+            \\
+            (!)
+            = & 
+            \frac{1}{2}
+            \bra{\mp} \epsilon_o
+            \ket{\psi(t)} e^{\mp i \frac{\phi(t)}{2}}            
+            \\            
+            = & 
+            \frac{1}{2} \epsilon_o c_\mp(t)            
+        \end{split}
+        \label{cmp}
+    \end{equation}
+    where in the step marked (!) we apply the rotating wave approximation, valid for $\omega_o \gg \Delta \omega, \delta \omega, \gamma, \frac{\epsilon_o}{\hbar}$.
+    substituting \eqref{cmp} into \eqref{hp}, we arrive at
+    \begin{equation}
+        \dot{c}_\pm = (i \hbar)^{-1} \left( \mp \frac{1}{2} \hbar \left( \Delta \omega + \delta \omega \right)c_\pm + \frac{1}{2} \epsilon c_\mp \right)
+    \end{equation}
+    this equation can be recast in the following form of a "modified" schrodinger equation:
+    \begin{equation}
+        \ket{\dot{\tilde{\psi}}} = \left( i \hbar \right)^{-1} \tilde h \ket{\tilde{\psi}}
+    \end{equation}
+    where
+    \begin{equation}
+        \ket{\tilde{\psi}} = e^{i \frac{\phi(t)}{2} \sigma_z} \ket{\psi}
+        \label{hpp}
+    \end{equation}
+    and 
+    \begin{equation}
+        \tilde{h} = \bm{\tilde{h}} \cdot \bm{\sigma}
+    \end{equation}
+    where
+    \begin{equation}
+        \bm{\tilde{h}} 
+        = \left( \tilde{h}_x, \tilde{h}_y, \tilde{h}_z \right) 
+        = \left(\frac{1}{2} \epsilon_o, 0, -\frac{1}{2} \hbar \left( \Delta \omega + \delta \omega(t) \right) \right)
+    \end{equation}
+    the time evolution of the expectation values $\Sigma_i = \bra{\tilde{\psi}} \sigma_i \ket{\tilde{\psi}}$ of the spin operators $\sigma_i$ for a state $\ket{\tilde{\psi}}$ satisfying \eqref{hpp} is given by
+    \begin{equation}
+        \begin{split}
+            \frac{d}{dt} {\Sigma}_i(t) 
+            & = 
+            \frac{d}{dt} \bra{\tilde{\psi}} \sigma_i \ket{\tilde{\psi}}
+            \\
+            & = 
+            \bra{\tilde{\psi}}
+            \left[
+                (i \hbar)^{-1} 
+                \comm{\tilde{h}}{\sigma_i}
+            \right]
+            \ket{\tilde{\psi}}
+            \\
+            & = 
+            \bra{\tilde{\psi}}
+            \left[
+                (i \hbar)^{-1} 
+                \sum_{j=1}^3 \tilde{h}_j
+                \comm{\sigma_j}{\sigma_i}
+            \right]
+            \ket{\tilde{\psi}}
+            \\            
+            (!) & = 
+            (i \hbar)^{-1} 
+            \sum_{j=1}^3 \tilde{h}_j
+            \left( \sum_{k=1}^3 2 i \epsilon_{jik} \bra{\tilde{\psi}} \sigma_k \ket{\tilde{\psi}} \right)
+            \\            
+            & = 
+            (i \hbar)^{-1} 
+            \sum_{j=1}^3 \tilde{h}_j
+            \left( \sum_{k=1}^3 2 i \epsilon_{jik} \Sigma_k \right)
+            \\
+            & =             
+            \sum_{j,k=1}^3 \epsilon_{ikj} \Sigma_k \frac{2\tilde{h}_j}{\hbar}
+            \\
+            & =             
+            \left( \bm{\Sigma} \times \bm{\Omega} \right)_i                        
+        \end{split}
+        \label{rabi}
+    \end{equation}
+    i.e.
+    \begin{equation}
+        \dot{\bm{\Sigma}} = \bm{\Sigma} \times \bm{\Omega}
+        \label{rabivec}
+    \end{equation}
+    where
+    \begin{equation}
+        \bm{\Sigma} = \left( \Sigma_x, \Sigma_y, \Sigma_z \right)
+    \end{equation}
+    and    
+    \begin{equation}
+        \begin{split}
+            \bm{\Omega} 
+            & = 
+            \left( \Omega_x, \Omega_y, \Omega_z \right)
+            \\ 
+            & = 
+            \frac{2 \bm{\tilde{h}}}{\hbar} 
+            \\
+            & = 
+            \left( \tilde{\omega}, 0, -\Delta \omega - \delta \omega(t) \right)
+        \end{split}
+    \end{equation}
+    where
+    \begin{equation}
+    \tilde{\omega} = \frac{\epsilon_o}{\hbar}
+    \end{equation}    
+    note that back in equation \eqref{rabi} we apply in the step marked (!) the commutation relations for the paul spin operators. 
+    <br><br>
+    it is worth asking of what relevance is equation \eqref{rabivec}, 
+    since it gives the time evolution of a state evolving under the influence of $\tilde{h}$, while our system evolves under $h$. 
+    if we are only concerned in <i>populations</i> $P_\pm(t) = \left| \ip{\pm}{\psi} \right|^2$ (as opposed to <i>coherences</i>), however, we find that we are ok:
+    \begin{equation}
+        \begin{split}
+            P_\pm(t) 
+            & = 
+            \left| \ip{\pm}{\psi} \right|^2
+            \\
+            & = 
+            \left| 
+                \bra{\pm}\left(e^{-i \frac{\phi(t)}{2} \sigma_z} e^{+i \frac{\phi(t)}{2} \sigma_z}\right) \ket{\psi} 
+            \right|^2
+            \\
+            & = 
+            \left|
+                \left( e^{+i \frac{\phi(t)}{2} \sigma_z} \ket{\pm} \right)^\dagger  \left( e^{+i \frac{\phi(t)}{2} \sigma_z} \ket{\psi} \right)
+            \right|^2            
+            \\
+            & = 
+            \left| 
+                \left( 
+                    e^{
+                        \pm i \frac{
+                            \phi(t)
+                        }{
+                            2
+                        }
+                    } 
+                    \ket{\pm} 
+                \right)^\dagger
+                \ket{
+                    \tilde{\psi}
+                }             
+            \right|^2                        
+            \\            
+            & = 
+            \left| 
+                e^{\mp i \frac{\phi(t)}{2}} \ip{\pm}{\tilde{\psi}}
+            \right|^2            
+            \\                    
+            & = 
+            \left| 
+                \ip{\pm}{\tilde{\psi}}
+            \right|^2
+            \\  
+            & = 
+            \ip{\tilde{\psi}}{\pm}\ip{\pm}{\tilde{\psi}}            
+            \\  
+            & = 
+            \frac{1}{2} \left(
+                \ip{\tilde{\psi}}{\pm}\ip{\pm}{\tilde{\psi}} + \ip{\tilde{\psi}}{\mp}\ip{\mp}{\tilde{\psi}}
+            \right) +
+            \frac{1}{2} \left(
+                \ip{\tilde{\psi}}{\pm}\ip{\pm}{\tilde{\psi}} - \ip{\tilde{\psi}}{\mp}\ip{\mp}{\tilde{\psi}}
+            \right)            
+            \\  
+            & = 
+            \frac{1}{2} \left(
+                P_\pm + P_\mp
+            \right) +
+            \frac{1}{2} \left(
+                \pm \Sigma_z
+            \right)
+            \\
+            & = 
+            \frac{1}{2} \left(
+                1 \pm \Sigma_z
+            \right)
+        \end{split}
+    \end{equation}
+    an expression for the dynamics of the classical expectation value 
+    $\bm{\tilde{\Sigma}} = \mathbb{E} \left[ \bm{\Sigma} \right]$ of the spins $\bm{\Sigma}$ over the distribution of phase noises $\delta \omega(t)$ 
+    can be determined using results summarized in appendix b of agarwal's "quantum statistical theory of optical-resonance phenomena in fluctuating laser fields" 
+    (<a href="https://link.aps.org/doi/10.1103/PhysRevA.18.1490">link</a>). 
+    for a dyamical system of the form
+    \begin{equation}
+        \dot{\bm{x}} = M \bm{x} + F(t) \bm{x}
+        \label{ag}
+    \end{equation}
+    where $M$ is a time-independent operator and $F(t)$ is a stochastic operator satisfying
+    \begin{align}        
+        \mathbb{E} \left[ 
+            F(t)
+        \right] 
+        & = 
+        0\,,
+        \label{age1}
+        \\
+        \mathbb{E} \left[ 
+            F_{ij}(t_1) F_{kl}(t_2) 
+        \right] 
+        & = 
+        2 Q_{ijkl} \delta(t_1 - t_2)
+        \label{age2}
+    \end{align}
+    for some $Q_{ijkl}$, the dynamics of the expectation value $\mathbb{E} \left[\bm{x}\right] = \bm{y}$ satisfies the equation
+    \begin{equation}
+        \dot{\bm{y}} = M \bm{y} + Q \bm{y}
+    \end{equation}
+    where
+    \begin{equation}
+        Q_{ij} = \sum_{k} Q_{ikkj}
+    \end{equation}
+    defining
+    \begin{align}
+        \bm{\Omega_o} & = \left(\tilde{\omega},0,-\Delta \omega\right) \\
+        \bm{\delta \Omega}(t) & = \left(0,0,-\delta \omega(t)\right) \\
+    \end{align}
+    so that 
+    \begin{equation}
+        \bm{\Omega} = \bm{\Omega_o} + \bm{\delta \Omega}(t)
+    \end{equation}
+    and making the identifications
+    \begin{align}
+        \bm{x} & \to \bm{\Sigma} \, , \\
+        M & \to \cdot \times \bm{\Omega_o} \, , \\
+        F(t) & \to \cdot \times \bm{\delta \Omega}(t) \, , \\        
+    \end{align}
+    we find that conditions \eqref{ag}, \eqref{age1}, and \eqref{age2} are satisfied and that
+    \begin{equation}
+        Q \to - \gamma \left( 1 - \bm{\hat{z}} \bm{\hat{z}}^\intercal \right)
+    \end{equation}
+    with
+    \begin{equation}
+        \bm{\hat{z}} = \left(0,0,1\right)
+    \end{equation}
+    so we arrive finally at the following dynamical equation for $\bm{\tilde{\Sigma}}$
+    \begin{equation}
+    \dot{\bm{\tilde{\Sigma}}} = \bm{\tilde{\Sigma}} \times \bm{\Omega_o} - \Gamma \bm{\tilde{\Sigma}}
+        \label{dyn}
+    \end{equation}
+    where
+    \begin{equation}
+        \Gamma = \gamma \left( 1 - \bm{\hat{z}} \bm{\hat{z}}^\intercal \right)        
+    \end{equation}
+
+    <h2>solution</h2>
+
+    together $\left[ \cdot \times \bm{\Omega_o} - \Gamma \right]$ form a linear operator, which we will call $A$, so that
+    \begin{equation}
+        \dot{\bm{\tilde{\Sigma}}} = A \bm{\tilde{\Sigma}}
+    \end{equation}
+    as a linear operator, $A$ possesses 3 eigenvectors $\bm{u}_i,\,i=1,2,3$ with associated eigenvalues $\lambda_i.$ 
+    if the system is initiatilized in a spin state $\bm{\tilde{\Sigma}}_o$, then after a time interval $T$ the spin state $\bm{\tilde{\Sigma}}'$ will be
+    \begin{equation}
+        \bm{\tilde{\Sigma}}' = 
+        \sum_{j=1}^3 
+        \bm{u}_j 
+        \left( 
+            \bm{\hat{x}}_j \cdot S^{-1} \bm{\tilde{\Sigma}}_o 
+        \right) 
+        e^{\lambda_j T}
+    \end{equation}
+    where    
+    \begin{equation}
+        S_{ij} = \bm{\hat{x}}_i \cdot \bm{u}_j
+    \end{equation}
+    where
+    \begin{equation}
+        \bm{\hat{x}}_1 = \bm{\hat{x}},\,\, \bm{\hat{x}}_2 = \bm{\hat{y}},\,\, \bm{\hat{x}}_3 = \bm{\hat{z}}
+    \end{equation}
+    we are interested in 
+    the $z$ component $\bm{\hat{z}} \cdot \bm{\tilde{\Sigma}}'$ of the final spin state     
+    starting from an initial state of $\bm{\tilde{\Sigma}}_o = -\bm{\hat{z}}$. 
+    this is given by
+    \begin{equation}
+    \bm{\hat{z}} \cdot \bm{\tilde{\Sigma}}' =
+        -
+        \sum_{j=1}^3 
+        \left( \bm{\hat{z}} \cdot \bm{u}_j \right)
+        \left( 
+            \bm{\hat{x}}_j \cdot S^{-1} \bm{\hat{z}}
+        \right) 
+        e^{\lambda_j T}
+    \end{equation}
+    
+    <h2>noise source</h2>
+
+    suppose the phase / frequency noise is supplied from a source $\delta \omega(t)$ with rms value $\delta \omega_o$ and a correlation time $\tau$. 
+    the correlation function $\mathbb{E} \left[ \delta \omega(t_1) \delta \omega(t_2) \right]$ of such a noise should be 
+    \begin{equation}
+        \mathbb{E} \left[ \delta \omega(t_1) \delta \omega(t_2) \right] = \delta \omega_o^2 e^{-\frac{|t_1 - t_2|}{\tau}}
+    \end{equation}
+    if the correlation time $\tau$ is much shorter than all the other relevant time scales 
+    (i.e. 
+    $\tilde{\omega}^{-1}$, 
+    $\Delta \omega^{-1}$, 
+    the interaction time $T$), 
+    then we can reasonably make the substitution 
+    \begin{equation}
+        \frac{e^{-\frac{|t_1 - t_2|}{\tau}}}{2 \tau} \to \delta(t_1 - t_2)
+    \end{equation}
+    so that for such a noise source we can make the identification 
+    \begin{equation}
+        \gamma \to \delta \omega_o^2 \tau
+    \end{equation}
+    
+    <h2>rabi frequency</h2>
+
+    the parameter $\tilde{\omega}$ corresponds to the rabi (radial) frequency, 
+    as can be seen by letting $\gamma = \Delta \omega = 0$ 
+    and inspecting the dynamics of equation \eqref{dyn} for an initial $\bm{\tilde{\Sigma}}(t_o) = \bm{\hat{z}}$. 
+    the spin will trace out a circular motion along a circle of unit radius with a velocity &mdash; and thus angular velocity &mdash; of 
+    $|\dot{\bm{\tilde{\Sigma}}}(t_o)| = \tilde{\omega}$.
+    <br><br>
+    according to hilborn's "einstein coefficients, cross sections, <i>f</i> values, dipole moments, and all that" 
+    (<a href="https://aapt.scitation.org/doi/10.1119/1.12937">link</a>), 
+    the rabi frequency is related to the electric field amplitude $E$ of the perturbing radiation 
+    and the dipole moment $\mu_{+-}$ of the transition by the relation
+    \begin{equation}
+        \tilde{\omega} = \frac{\mu_{+-}E}{\hbar}
+    \end{equation}
+    the cycle-averaged intensity $I$ of a plane electromagnetic wave with electric field amplitude $E$ is given by
+    \begin{equation}
+        I = \frac{1}{2} c \epsilon_o E^2\,,
+    \end{equation}
+    while from chadwick et al.'s "quantum state specific reactant preparation in a molecular beam by rapid adiabatic passage" 
+    (<a href="https://aip.scitation.org/doi/abs/10.1063/1.4861054">link</a>) we find the transition moment $\mu_{+-}$ 
+    to be related to the transition's einstein coefficient $A_{+-}$ by the relationship 
+    \begin{equation}
+        \mu_{+-} = c\left(j_-, m_- ; 1, 0 | j_+ m_+ \right) \sqrt{\frac{3 \varepsilon_o h c^3}{2 \omega_o^3} A_{+-}}
+    \end{equation}
+    where
+    <ul>
+        <li>
+            $\varepsilon_o$ is the permittivity of free space 
+            (not to be confused with the strength $\epsilon_o$ of the perturbation $h'$)
+        </li>
+        <li>
+            $c\left(j_1,m_1;j_2,m_2|j_3,m_3\right)$ is the clebsch-gordan coefficient,
+        </li>
+        <li>
+            $j_{\pm}$, $m_{\pm}$ are the $j$ and $m$ quantum numbers of the upper and lower states,
+        </li>
+        <li>
+            $h = 2 \pi \hbar$ is planck's constant
+        </li>
+    </ul>
+    we can rearrange terms and obtain the following intuitively-appealing expression for the rabi frequency $\bar{f} = \frac{\bar{\omega}}{2 \pi}$:
+    \begin{equation}
+        \bar{f} = \sqrt{A_{+-}A_\gamma}
+    \end{equation}
+    where
+    \begin{equation}
+        A_\gamma = \frac{3}{2} \times \frac{1}{\pi^4} \times \frac{I \times \pi \left(\frac{\lambda}{2}\right)^2}{E_\gamma}
+    \end{equation}
+    where $\lambda = \frac{c}{2 \pi \omega_o}$ is the (vacuum) wavelength of the radiation 
+    and $E_\gamma = \hbar \omega_o$ is the energy of the photons making up the radiation. 
+    so we can think of $A_\gamma$ roughly speaking as the rate at which photons pass through a circle of diameter equal to the wavelength. 
+    the rate $\bar{f}$ at which radiation stimulates rabi cycling is then seen to be the geometric mean of $A_{+-}$, the spontaneous emission rate, and 
+    the rate at which photons strike the molecule.
+  </body>
+</html>

@@ -1,0 +1,205 @@
+<!doctype html>
+<html>
+  <head>
+    <title>physics blog</title>    
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+    />
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"
+    ></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+      onload="
+        renderMathInElement(document.body, {
+          delimiters: [
+            { left: '$$', right: '$$', display: true },
+            { left: '$', right: '$', inline: true },
+          ],
+        })
+      "
+    ></script>
+  <link rel="stylesheet" href="style.css" />
+  <script defer src="main.js"></script>
+  </head>
+  <body>
+  <button id="dm" title="Toggle dark mode">&#9681;</button>
+    <h1>2026.03.12 &mdash; reflection parity conservation and nuclear spin</h1>
+    <h2>spaces of molecular wavefunctions and nuclear spin states</h2>
+    <p>
+      Take a molecule composed of $N$ different species, with $M_n$ different atoms of a species $n=1,\ldots,M_n$, so that the total number of atoms is just $\sum_n^{N} M_n$. 
+      If we take the ethane molecule C<sub>2</sub>H<sub>6</sub>, for example, then $N = 2$ since there are two species (carbon and hydrogen) and we can make the assignment $m_1 = 2$ and $m_2 = 6$ so that $n=1$ and $n=2$ correspond to carbon and hydrogen, respectively.       
+    </p>
+    <p>
+      Let's define $V$ as the space of complex wavefunctions $\psi(x_{11},\ldots, x_{nm}, \ldots, x_{N M_N})$ of the atom coordinates $x_{nm}$ where $n=1,\ldots,N$ denotes the species and $m=1,\ldots,M_n$ enumerates the atoms of species $n$. 
+      Let $W$ be the space of nuclear spin states. 
+      If $i_n=0,\frac{1}{2},1,\frac{3}{2},\ldots$ is the nuclear of species $n$, then the space of nuclear spin states for an atom of species $n$ is $\mathbb{C}^{2i_n + 1}$, so the space $W=\bigotimes_n^{N} \left(\mathbb{C}^{2i_n+1}\right)^{\otimes M_n}$
+    </p>
+    <h2>permutations</h2>
+    <p>
+      The raw "unsymmetrized" Hilbert space for the molecule is just the tensor product $V \otimes W$. 
+      We can define an action of the group $\Pi_n^N S^{M_n} \equiv S$ of permutations of identical particles. 
+      A permutation $(\sigma_1,\ldots,\sigma_n,\ldots,\sigma_N) \equiv \sigma \in S$ (i.e. $\sigma_n \in S^{M_n}$) acts on wavefunctions $\psi \in V$ so that
+      $$
+      \left(O^V_\sigma \psi\right)\left(\ldots,x_{nm},\ldots\right) := \psi\left(\ldots,x_{n\sigma_n^{-1}(m)},\ldots\right)
+      $$
+      While for elements $\left(\ldots,w_{nm},\ldots\right) \equiv w$ of $W$ (i.e. $w_{nm} \in \mathbb{C}^{2i_n+1}$ for $m=1,\ldots,M_n$) we have similarly
+      $$
+      \left(O^W_\sigma w\right)_{nm} := w_{n\sigma_n^{-1}(m)}
+      $$
+      The action $O_\sigma$ on the whole space is just $O^V_\sigma \otimes O^W_\sigma$. 
+    </p>
+    <h2>symmetrized states</h2>
+    <p>
+      The true space Hilbert space for the molecule is the subspace $\langle V \otimes W \rangle$ of states in $V \otimes W$ that are "properly symmetrized". 
+      A properly symmetrized state $\Psi \in V \otimes W$ has the property that under a permutation an exchange $\sigma_{n;mm'} \in S$ of two arbitrary atoms $m$, $m'$ of species $n$, we have 
+      $$
+      \begin{equation}
+      O_{\sigma_{n;mm'}}\Psi = \left(-1\right)^{2i_n} \Psi
+      \end{equation}
+      $$
+      so that the half-integer spin species (fermions) are antisymmetric under exchange, and the species of integral spin (bosons) are symmetric under exchange.       
+    </p>
+    <h2>inversions</h2>
+    <p>
+      We can also define an action of the group $P \equiv \left(\pm1,\times\right) \cong \mathbb{Z} / 2\mathbb{Z}$ on wavefunctions $\psi \in V$ via the prescription
+      $$      
+      \left(O_\pm^V\psi\right)\left(\ldots,x_{nm}\ldots\right) := \psi\left(\ldots,\pm x_{nm},\ldots\right)      
+      $$
+      This action on $V$ can be extended to the whole space $V \times W$ by just letting the group act trivially on the nuclear spin states, i.e. $O_\pm := O^V_\pm \otimes 1_W$.       
+    </p>    
+    <h2>complete nuclear permutation inversion (CNPI) group</h2>
+    <p>
+      We therefore can define the properly symmetrized states as the elements of $V \otimes W$ that are irreps $\Lambda^+_o$ or $\Lambda^-_o$ of the group $P \times S \equiv G$, also known as the "complete nuclear permutation inversion group" or CNPI for short. 
+      The irreps $\Lambda^\pm_o$ are the (1-dimensional) irreps obeying equation (1) having an eigenvalue of $\pm1$ under the action of the nontrivial $P$ element, i.e. being of positive (+1) or negative (-1) parity. 
+      We can think of $\Lambda^\pm_o$ as an $N+1$ tuple $(p_0,\ldots,p_N)$ of "parities" $p_n \in \{+1,-1\}$, where $p_0$ denotes the inversion parity (i.e. for $\Lambda^\pm_o$ we have $p_0 = \pm 1$) while $p_n$ denotes the exchange parity $(-1)^{2i_n}$ of species $n$. 
+    </p>
+    <h2>feasible operations</h2>
+    <p>
+      For a nearly rigid molecule we can define a local neighborhood $\mathcal{N}$ of configurations $(x_{11},\ldots,x_{nm},\ldots,x_{NM_N})$ near the equilibrium geometry to which a molecule, if initialized in this neighborhood, will remain confined throughout its evolution due to a lack of sufficient available energy in the system to distort the molecule to configurations outside of this neighborhood<a class="fn" id="ref1">*</a>. 
+      We define the "molecular symmetry group" $H$ of the molecule to be the subgroup of $G$ so that $\mathcal{N}$ is closed under the action of elements in $H$. 
+      If $H \neq G$ then the space of configurations will decompose into multiple "sectors" enumerated by the cosets of $H$. 
+      That is, from a neighborhood $\mathcal{N}$ localized about some equilibrium geometry and a coset $\{\left(\pm 1,\sigma\right)\}$ of $G/H$ we can generate another neighborhood $\mathcal{N}' = \left(\pm 1, \sigma\right)\mathcal{N}$ localized about an equivalent equilibrium geometry. 
+      Likewise the space of the wavefunctions $V$ decomposes into sectors $V_i$ $i=1,\ldots,[G:H]$ where the support of a wavefunction $\psi$ in the subspace $V_i$ corresponding to the coset $\{\left(\pm 1,\sigma\right)\} \in G/H$ is limited to the associated neighborhood $\mathcal{N}_i \equiv \left(\pm 1,\sigma\right)\mathcal{N}$. 
+    </p>    
+    <p>
+      The Hamiltonian operator $\mathcal{H}$ governing the physics of the molecule is local in the sense that it will also decompose into a sum of $[G:H]$ equivalent operators $\mathcal{H}_i$ acting only on each sector $V_i$, i.e. if $\psi_i \in V_i$ and $\psi_j \in V_j$ then 
+      $$
+      \begin{equation}
+      (H \psi_i,\psi_j) = 0\quad\text{unless}\,\,i=j\,. 
+      \end{equation}
+      $$
+      Due to this decomposition, there is in a sense no point in considering the full space $V$ of wavefunctions when trying to understand the physics of the molecule, since the different sectors can not "interfere" with one another and are equivalent as they are related to one another by symmetry operations, i.e. by the action of elements of the nontrivial cosets. 
+      We simplify analysis of nearly rigid molecules by restricting consideration to a single sector instead of the full space of wavefunctions. 
+    </p>
+    <h2>the induced representation</h2>
+    <p>
+      The group $H$ is thus important because it is the largest subgroup of $G$ whose action is closed on the subspaces $V_i$, and can therefore be used to classify states in those subspaces and elucidate selection rules governing transitions between these states. 
+      To this end, let's fix some subspace, say $V_1$, and let $\bigoplus_j \Gamma_V^j$ be a decomposition of the space $V_1$ into subspaces $\Gamma^j_V$ that are simultaneously eigenspaces of the Hamiltonian $\mathcal{H}$ and irreducible representations of action of the $O^V_\sigma$ restricted to $\sigma \in H$, 
+      so that for each $j$ we have some $\mathcal{H}$ eigenvalue $\varepsilon_j \in \mathbb{R}$ and some $H$-irrep $\lambda_j$. 
+      We can similarly decompose the entire space $W$ of nuclear spin states into subspaces $\Gamma^k_W$ that are irreducible under the restriction of the $O^W_\sigma$ action to $H$. 
+      We can then form (generally reducible) products $\Gamma^j_V \otimes \Gamma^k_W$ which in turn decompose into a sum of subspaces $\Gamma^l_{jk}$ that are irreps of type $\lambda_l$ under the $H$-restriction of the action $O_\sigma$. 
+      The action of the unrestricted $G$-action $O_\sigma$ on the $\Gamma^l_{jk}$ generates (generally reducible) instances of the induced representation $\text{Ind}^G_H \lambda_l$.       
+    </p>
+    <h2>frobenius reciprocity</h2>
+    <p>
+      The induced representations $\Gamma_{jkl}$ (we move the $l$ subscript downstairs) can in turn be decomposed into a sum of subspaces $\Gamma^\Lambda_{jkl}$ that are $G$-irreps of type $\Lambda$. 
+      The space $\langle V \otimes W \rangle$ of properly symmetrized states is just the sum over $j, k, l$ of the subspaces $\Gamma^\Lambda_{jkl}$ where $\Lambda = \Lambda^\pm_o$. 
+      By Frobenius reciprocity, the multiplicity of a $G$-irrep $\Lambda$ in the induced representation $\text{Ind}_H^G \lambda$ of a $H$-irrep $\lambda$ is just the multiplicity of the $\lambda$ in the restriction of $\Lambda$ to $H$. 
+      In terms of the inner product defined on representations this relationship is expressed by the equality
+      $$
+      \langle \text{Ind}_H^G \lambda, \Lambda \rangle_H = \langle \lambda, \text{Res}_H^G \Lambda \rangle_G
+      $$      
+    </p>
+    <p>
+      Now since the $\Lambda^\pm_o$ are 1-dimensional, the restriction $\langle \lambda, \text{Res}_H^G \Lambda^\pm_o \rangle_G \equiv \lambda^\pm_o$ is an $H$-irrep so that $\Lambda^\pm_o$ appears in the induced representation of $\lambda$ just if $\lambda = \lambda^\pm_o$. 
+      Likewise, since the $\lambda^\pm_o$ are also 1-dimensional, it appears in the product of $\lambda_j \times \lambda_k$ just if $\lambda_k = \lambda^\pm_o \times \lambda_j^*$. 
+      To see this we note that, for any group $G$, given two $G$-irreps $\lambda_a, \lambda_b$ and a 1-dimensional $G$-irrep $\lambda_c$ we have
+      $$
+      \begin{align*}
+      \langle \lambda_a \times \lambda_b, \lambda_c \rangle 
+      = & 
+      |G|^{-1} \sum_g \chi_{a \times b}(g) \chi^*_c(g) 
+      \\ = & 
+      |G|^{-1} \sum_g \chi_a(g) \chi_b(g) \chi^*_c(g) 
+      \\ = & 
+      |G|^{-1} \sum_g \chi_b(g) \left(\chi_c(g) \chi_a^*(g)\right)^*
+      \\ = & 
+      |G|^{-1} \sum_g \chi_b(g) \left(\chi_{c \times a^*}\right)^*
+      \\ = & 
+      \langle \lambda_b, \lambda_c \times \lambda_a^* \rangle 
+      \\ = & \begin{cases}
+        1 & \lambda_b = \lambda_c \times \lambda_a^* \\ 0 & \text{else}
+      \end{cases}
+      \end{align*}
+      $$      
+      since $\lambda_b$ is irreducible by assumption and the product of any irrep $\lambda_a$ with a 1-dimensional irrep $\lambda_c$ is also irreducible. 
+    </p>
+    <p>
+      So our symmetrization requirement places a very strong constraint on which nuclear spin representations $\Gamma^k_W$ can pair with a given representation $\Gamma^j_V$ of local wavefunctions. 
+      A simple yet interesting example is the perfectly rigid O<sub>2</sub> molecule. 
+      The oxygen nucleus (or, rather, its most naturally abundant isotope) is spin-0, and so its nuclear spin space $W$ is composed of just a single instance of the trivial $S_2$ irrep. 
+      Now for O<sub>2</sub> the molecular symmetry group $H$ is just the full CNPI group $G$, and there will be wavefunctions $\psi_+$ and $\psi_-$ of even and odd symmetry, respectively, under exchange of the two oxygen nuclei. 
+      However, since the oxygen nucleus is spin 0, we have $\Lambda^\pm_o = (\pm 1, +1)$ the odd wavefunctions $\psi_-$ can only pair with spin states of odd exchange symmetry, which we just said do not exist. 
+      As a consequence, for O<sub>2</sub> we observe strange "holes" in their optical spectra where we expect to see strong features that do not exist as a consequence of the state symmetrization requirement. 
+    </p>
+    <h2>parity and $\mathbb{Z}_2$ grading</h2>
+    <p>
+      So the only nuclear spin states that we can pair with wavefunctions of $H$-symmetry $\lambda$ are those with symmetry $\lambda^\pm_o \times \lambda^* \equiv \lambda^\pm$. 
+      Now we can take any $H$-irrep $\lambda$ and "twist" it to produce another $H$-irrep $\bar{\lambda}$ with a character 
+      $$
+      \chi_{\bar{\lambda}}(\pm 1, \sigma) := \pm \chi_\lambda(\pm 1, \sigma)
+      $$
+      From this definition we can conclude that 
+      $$
+      \bar{\lambda}^\pm = \lambda^\mp
+      $$
+      since for an element $(p, \sigma) \in H$ we have
+      $$
+      \begin{align*}
+      \chi_{\bar{\lambda}^\pm}(p, \sigma) 
+      = & 
+      \chi_{\lambda^\pm_o \times \bar{\lambda}^*}(p, \sigma) 
+      \\ = & 
+      \chi_{\lambda^\pm_o}(p, \sigma) \chi_{\bar{\lambda}^*}(p, \sigma)
+      \\ = & 
+      \chi_{\lambda^\pm_o}(p, \sigma) \chi^*_{\bar{\lambda}}(p, \sigma)
+      \\ = & 
+      p \chi_{\Lambda^\mp_o}(p, \sigma) \chi^*_{\bar{\lambda}}(p, \sigma)
+      \\ = & 
+      p^2 \chi_{\Lambda^\mp_o}(p, \sigma) \chi^*_{\lambda}(p, \sigma)
+      \\ = & 
+      \chi_{\Lambda^\mp_o}(p, \sigma) \chi^*_{\lambda}(p, \sigma)
+      \\ = &
+      \chi_{\lambda^\mp}(p, \sigma) 
+      \end{align*}
+      $$
+      This result says that any nuclear spin state compatible with a local wavefunction of symmetry $\lambda$ is also compatible with one of symmetry $\bar{\lambda}$ and that, moreover, the pairing of some nuclear spin state to a wavefunction of symmetry $\lambda$ will produce a symmetrized state of inversion parity necessarily opposite to that obtained by pairing to a wavefunction of $\bar{\lambda}$ symmetry. 
+    </p>
+    <h2>the spectator role of nuclear spin</h2>
+    <p>
+      Now the dirty secret is that the Hamiltonian $\mathcal{H}_o$ of the <i>isolated</i> molecule &mdash; that is, the Hamiltonian in the absence of a scattering target &mdash; does not actually commute with the action $O^V_\sigma$ of permutations and inversions of the wavefunctions. 
+      This is because when we permute the coordinates of the atom without also simultaneously permuting their nuclear spins, we effectively make a reassignment of the nuclear spins. 
+      This fact alone would not prevent $[H,O^V_\sigma]$ from vanishing if $\mathcal{H}_o$ only acted trivially on the nuclear spin space, i.e. if $\mathcal{H}_o = \mathcal{H}_o^V \otimes 1_W$. 
+      However, there is in reality a small "hyperfine" interaction term $\mathcal{H}_{\text{HF}}$ coupling the nuclear spins to the molecule's motion which act alongside the much stronger kinetic and potential energy terms $\mathcal{T}$ and $\mathcal{V}$ which <i>do</i> act trivially on the nuclear spins. 
+    </p>
+    <p>
+      The principle effect of the hyperfine interaction on the <i>spectrum</i> of the molecule, i.e. on the eigenstates and eigenvalues of $\mathcal{H}_o$, is to "break" the degeneracy between all the symmetrized states deriving from the same irreducible subspace $\Gamma^\lambda_V$ of local wavefunctions but differing by the specific irreducible nuclear spin factor $\Gamma^{\lambda^\pm}_W$. 
+      Due to the weakness of the $\mathcal{H}_{\text{HF}}$, we can often to a very good approximation neglect coupling between subspaces $\Gamma^j_V$ and $\Gamma^{j'}_V$ unless $\varepsilon_j \approx \varepsilon_{j'}$. 
+      Barring any "accidental degeneracy" this implies that we can ignore any coupling between subspaces where $\lambda_j \neq \lambda_{j'}$.      
+    </p>
+    <p>
+      This means that the energy levels that we initialize molecules into before scattering and whose population we measure after scattering are characterized by a d...
+    </p>
+    <hr class="endline">        
+    <section class="ref">
+      <p id="fn1">
+        I'm not trying to be too rigorous here with my definition of feasible operations and this neighborhood $\mathcal{N}$. 
+        Hopefully the qualitative idea is somewhat clear.
+      </p>
+    </section>    
+  </body>
+</html>

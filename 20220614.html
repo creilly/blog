@@ -1,0 +1,150 @@
+<html>
+  <head>
+    <title>Chris Reilly's EPFL blog</title>
+    <link rel="icon" type="image/png" href="/epfl/icon.png">
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async>
+      MathJax.Hub.Config({
+        tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+        TeX: {
+          Macros: {
+            bm: ["{\\boldsymbol #1}",1],
+          },
+          equationNumbers: { autoNumber: "AMS" }
+        }
+      });      
+    </script>
+  </head>
+  <body style="max-width: 600px; margin: 50;">
+    <h1>2022.06.14 &mdash; bolometer icing</h1>
+    this post presents a quantatitive analysis of the "icing" hypothesis. 
+    the hypothesis attempts to explain the observed reduction in bolometer sensitivity with methane exposure. 
+    the argument is that the accumulation of layer of solid methane leads to an appreciable increase in the heat capacity of the bolometer, 
+    which is directly proportional to the bolometer sensivity.
+    <h2>bolometer lifetime</h2>    
+    we can assign a "lifetime" $\tau$ to the bolometer by determining the exposure time required to grow a layer of solid methane whose heat capacity 
+    matches that of the diamond absorber. 
+    defining:
+    <ul>
+      <li>
+        <i>c</i><sub>CH<sub>4</sub></sub> : molar heat capacity of solid methane
+      </li>
+      <li>
+        <i>c</i><sub>C</sub> : molar heat capacity of diamond
+      </li>
+      <li>
+        <i>f</i> : molecular flux into bolometer
+      </li>
+      <li>
+        <i>N</i><sub>C</sub> : size of diamond absorber
+      </li>
+    </ul>
+    we obtain the following expression for $\tau$:
+    \begin{equation}
+      \tau = \frac{c_C N_C}{c_{CH_4} f}
+    \end{equation}
+    from <a href="https://doi.org/10.1021/ja01355a011">https://doi.org/10.1021/ja01355a011</a> 
+    I obtain a value of <i>c</i><sub>CH<sub>4</sub></sub> = 0.5 cal mol<sup>-1</sup> K<sup>-1</sup> for "equilibriated" solid methane at 2 Kelvin and 
+    a value of <i>c</i><sub>CH<sub>4</sub></sub> = 0.01 cal mol<sup>-1</sup> K<sup>-1</sup> for "unequilibriated" solid methane at 2 K.
+    the authors explain that equilibriation of a pure sample of solid methane can take several hours.
+    <br><br>
+    using the formula found in <a href="https://doi.org/10.1080/14786435808243223">https://doi.org/10.1080/14786435808243223</a> I obtain a heat capacity of diamond 
+    at 2 Kelvin of 3.2 &times; 10<sup>-7</sup> cal mol<sup>-1</sup> K<sup>-1</sup>. 
+    the stark difference between the solid methane and diamond heat capacities at 2 K can be qualitatively explained in terms of the rigid nature of the diamond lattice. 
+    a much larger fraction of the phonons in diamond will be "frozen out" compared to solid methane. 
+    <br><br>
+    the size of the diamond absorber can be determined easily from the density of diamond (3 mg mm<sup>-3</sup>) and the absorber dimensions (4 mm diameter, 0.1 mm thickness). 
+    <br><br>
+    the methane flux <i>f</i> into the bolometer is given by 
+    the flux density $\frac{df}{d\Omega}$ scattering from the surface 
+    multiplied by the solid angle $\Delta \Omega$ subtended by the bolometer.
+    for a scattering distribution of the form $\cos^n\theta$, the peak scattered flux density $\frac{df}{d\Omega}$ is related to the incident flux $F$ by 
+    \begin{equation}
+    \frac{df}{d\Omega} = F \frac{n+1}{2 \pi}
+    \end{equation}
+    the solid angle $\Delta \Omega$ subtended by the bolometer is given by
+    \begin{equation}
+    \Delta \Omega = \frac{\pi r^2}{R^2}
+    \end{equation}
+    where <i>r</i>=2 mm is the absorber radius and <i>R</i>=80 mm is the bolometer-surface distance
+    <br><br>
+    the incident flux $F$ can be determined from the pumping speed $S$ and the chamber pressure $P$ by the following formula
+    \begin{equation}
+    F = \frac{P}{P_o} \frac{S}{V_{stp}}
+    \end{equation}
+    where <i>P</i><sub>o</sub> = 10<sup>3</sup> mbar and V<sub>stp</sub>=22.4 liters. 
+    in bojung chen's thesis he calculates the pumping speed to be <i>S</i> = 625 l s<sup>-1</sup>, 
+    and for neat methane at 3 bar backing pressure we observe a rise in the P<sub>4</sub> chamber equal of <i>P</i> = 6 &times; 10<sup>-8</sup> mbar.
+    <br><br>
+    with these numbers we obtain the following results:
+    <ul>
+      <li>
+        <i>F</i> = 1.7 &times; 10<sup>-9</sup> moles s<sup>-1</sup>    
+      </li>
+      <li>
+        <i>f</i> = 6.8 &times; 10<sup>-12</sup> moles s<sup>-1</sup>
+      </li>
+      <li>
+        <i>N</i><sub>C</sub> = 3.1 &times; 10<sup>-4</sup> moles
+      </li>  
+      <li>
+        &tau; = 30 s (<i>c</i><sub>CH<sub>4</sub></sub> = 0.5 cal mol<sup>-1</sup> K<sup>-1</sup>)
+      </li>    
+      <li>
+        &tau; = 24 min 40 s (<i>c</i><sub>CH<sub>4</sub></sub> = 0.01 cal mol<sup>-1</sup> K<sup>-1</sup>)
+      </li>    
+    </ul>
+    (see <a href="20220614ice.py">20220614ice.py</a> for the python script used to do these (simple) calculations).
+    <br><br>
+    diamond is roughly six times denser than solid methane, so the methane thickness at one bolometer lifetime is either 3 nanometers or 0.6 angstroms, 
+    depending on whether you assume the smaller or larger solid methane heat capacity, respectively.
+    <br><br>
+    our most recent measurements with neat methane observed at specular resulted in a lifetime closer to 70 minutes, significantly longer than even the slower estimate. 
+    off the top of my head I can list some reasons, listed in estimated order of importance, why we made observe a <i>slower</i> than expected sensitivity decay:
+    <ul>
+      <li>
+        the bolometer heat capacity is the sum of the heat capacities of the diamond absorber and silicon chip. 
+        in my calculation I consider only the diamond absorber. 
+      </li>      
+      <li>
+        the molar heat capacity of the diamond absorber may in reality be larger than estimated. 
+        the diamonds used in the referenced study are "clear industrial diamond", and "none contained occlusions". 
+        perhaps our diamonds have a higher defect density, leading to an increased heat capacity.
+      </li>
+      <li>
+        some of the molecules striking the nickel surface may temporarily trap and desorb in a very wide angular distribution. 
+        the fraction of molecules that trap will contribute only negligibly to the growth of solid methane.         
+      </li>
+      <li>
+        the molecules may not stick at the diamond surface with unit efficiency. 
+        the diamond surface is stiff and the molecules from the supersonic expansion are somewhat fast. 
+        if this is the case, we may expect an <i>acceleration</i> of the bolometer sensitivity decay 
+        once the molecules begin to impinge upon a soft layer of solid methane.         
+      </li>      
+    </ul>
+    <h2>
+      background flux
+    </h2>
+    for H<sub>2</sub>O we have the simple rule that every square inch of cold surface pumps with speed of roughly 100 l s<sup>-1</sup>. 
+    Since methane and water have nearly the same mass, 
+    we can use this figure to estimate the flux <i>f</i><sub>bg</sub> coming into the bolometer aperture from the background pressure $P$. 
+    the result obtained is <i>f</i><sub>bg</sub> &asymp; 5 &times; 10<sup>-12</sup> moles s<sup>-1</sup>. 
+    remarkably, this is nearly as strong as the flux coming from the direct beam! 
+    <br><br>
+    it is reasonable however to suspect that the background methane flux incident on the actual bolometer will be signficantly less than <i>f</i><sub>bg</sub>.
+    the vast majority of the molecules entering the bolometer snout will strike the baffles. 
+    the cold baffles serve to both geometrically impede access to the bolometer and to also slow the molecules down. 
+    both of these effects will reduce the conductance between the snout aperture and the bolometer (which acts as a sort of methane pump),
+    with the result that the true flux on the bolometer will be less than that indicated by <i>f</i><sub>bg</sub>. 
+    <br><br>
+    in any case, it will be interesting to see what the measurements indicate. 
+    what is the bolometer lifetime subjected to only a given background methane pressure?
+    <h2>thermal conductivity</h2>
+    to wrap up, I point out that, at a fixed modulation frequency, 
+    a reduction in bolometer sensitivity can be equally well attributed to a decrease in the thermal conductivity between the absorber surface 
+    and the silicon bolometer. 
+    however, the thermal conductivity of diamond at 2 K is 80 mW cm<sup>-1</sup> K<sup>-1</sup> for natural diamond 
+    and 1 mW cm<sup>-1</sup> K<sup>-1</sup> for CVD diamond (<a href="https://doi.org/10.1007/978-1-4615-2257-7_7">https://doi.org/10.1007/978-1-4615-2257-7_7</a>), while 
+    the thermal conductivity of solid methane at 2 K is 5 mW cm<sup>-1</sup> K<sup>-1</sup> (<a href="https://doi.org/10.1103/PhysRevB.55.5578">https://doi.org/10.1103/PhysRevB.55.5578</a>). 
+    that the values for the two materials are comparable suggests that it would require an implausibly thick layer of solid methane to measurably affect the bolometer sensitivity.    
+  </body>
+</html>

@@ -1,0 +1,72 @@
+<html>
+  <head>
+    <title>Chris Reilly's EPFL blog</title>
+    <link rel="icon" type="image/png" href="/epfl/icon.png">
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async>
+      MathJax.Hub.Config({
+        tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+        TeX: {
+          Macros: {
+            bm: ["{\\boldsymbol #1}",1],
+          },
+          equationNumbers: { autoNumber: "AMS" }
+        }
+      });      
+    </script>
+  </head>
+  <body style="max-width: 600px; margin: 50;">
+    <h1>2022.05.11 &mdash; pumping speed of H<sub>2</sub>O</h1>
+    As a first approximation, a vacuum pump can be thought of as a machine which will remove a certain quantity of air in a given quantity of time. 
+    For instance, the big turbo-molecular pump in the UHV chamber pumps 2000 liters of air every second. 
+    We say that the pump has a "pumping speed", denoted by the symbol $S$, of 2000 l/s.
+    <br><br>
+    For a typical mechanical pump it is easy to imagine it physically removing air from the chamber. 
+    However, there are other, non-mechanical, types of pumps. 
+    For instance, a sufficiently cold surface also acts to pump away air from a chamber. 
+    A "liquid nitrogen trap" is simply a surface in good thermal contact with liquid nitrogen. 
+    Water molecules striking the surface stick to the surface, 
+    and, once stuck, can not leave because there is simply not enough thermal energy available on the cold (77 degrees Kelvin) surface to allow them to break free back into the gas phase.
+    <br><br>
+    Can we assign a pumping speed to a liquid nitrogen trap? 
+    The answer is yes, a liquid nitrogen trap pumps water molecules with a speed of 95 l/s per square inch of cold surface. 
+    To see how this is calculated, imagine all the water molecules in the chamber whose velocity in the direction towards the surface is within some small interval $\delta v$ of $v$. 
+    What is the volume of the region enclosing those molecules that will strike the surface (and thus be pumped away) within a small time increment $\Delta t$? 
+    Well, a molecule travelling with a velocity $v$ will travel a distance $v \Delta t$ in a time $\Delta t$, so any molecule within this distance of the surface will strike it. 
+    So the region in question is a slab of height $v \Delta t$ and cross-sectional area $A$ and thus has a volume $A v \Delta t$. 
+    But only a fraction $f(v)\delta v$ of the molecules are within the range of considered velocities, where $f(v)$ is the probability density of finding a water molecule in the gas phase with a velocity $v$. 
+    The velocities are distributed according to a normal distribution with mean of zero and standard deviation $\sigma_v = \sqrt{\frac{kT}{M}} = 370\,\mathrm{m/s}$ (compare to speed of sound of 343 m/s). 
+    So effectively this subset of molecules contributes a volume $\Delta \delta V(v) = f(v) \delta v A v \Delta t$ to the "pumped volume" in this time interval. 
+    <br><br>
+    The total effective volume $\Delta V$ pumped by the cold surface over this interval is obtained by summing up $\Delta \delta V(v)$ over all the velocity increments $v=0, \delta v, 2 \delta v, \ldots$:
+    \begin{equation*}
+    \begin{split}
+      \Delta V 
+      & = 
+      \int_0^\infty dv \Delta \delta V(v)
+      \\ 
+      & = 
+      A \Delta t \int_0^\infty v f(v) dv
+      \\
+      & = 
+      \frac{A \Delta t}{2} \left( \int_{-\infty}^\infty |v| f(v) dv \right)
+      \\
+      & = 
+      \frac{A \Delta t}{2} \left( \sqrt{2}{\pi} \sigma_v \right)
+      \\
+      & =       
+      A \Delta t \frac{\sigma_v}{\sqrt{2 \pi}}
+    \end{split}
+    \end{equation*}    
+    The integral in parentheses is recognized as the expectation value of a 
+    <a href="https://en.wikipedia.org/wiki/Half-normal_distribution">half-normal distribution</a> with standard deviation $\sigma_v$. 
+    The pumping speed per unit surface area $\frac{d S}{d A} = \frac{d V}{d t} / A$ is therefore simply $\frac{\sigma_v}{\sqrt{2 \pi}} \approx 148 \, \mathrm{m/s}$.     
+    Converting this to liters per second per square inch we arrive at $\frac{d S}{d A} \approx 95 \, \mathrm{l/s/in^2}$, in perfect agreement with 
+    <a href="https://www.sisweb.com/vacuum/sis/ln2trap.htm">Scientific Instrument Services</a>, presumably the world's expert on pumping speed calculations.
+    <!-- <figure style="width:XXXpx"> -->
+      <!--   <img src="XXX.YYY" style="align:center" width="XXXpx"> -->
+      <!--   <figcaption> -->
+	<!-- 	XXX -->
+	<!--   </figcaption> -->
+      <!-- </figure> -->
+  </body>
+</html>

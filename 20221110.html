@@ -1,0 +1,126 @@
+<html>
+  <head>
+    <title>Chris Reilly's EPFL blog</title>
+    <link rel="icon" type="image/png" href="/epfl/icon.png">
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async>
+      MathJax.Hub.Config({
+        tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+        TeX: {
+          Macros: {
+            bm: ["{\\boldsymbol #1}",1],
+          },
+          equationNumbers: { autoNumber: "AMS" }
+        }
+      });      
+    </script>
+  </head>
+  <body style="max-width: 600px; margin: 50;">
+    <h1>2022.11.10 &mdash; servo loops</h1>
+    suppose we have a motor that we would like to keep synchronized with a reference oscillator. 
+    to do this we apply some torque so that the frequency of motor rotation approximately matches the frequency of the reference oscillator. 
+    note that it is extremely difficult determine the exact torque necessary to keep the motor synchronized with the reference oscillator. 
+    for example, if you wanted to keep a motor spinning at 100 Hz synchronized for three hours (10<sup>4</sup> seconds), 
+    you would need to apply a torque correct within a part in $10^2 \times 10^4 = 10^6$, i.e. one part per million, which is a tall order. 
+    for all pratical purposes to achieve synchronization it is necessary to use feedback of some sort. 
+    <br><br>
+    the simplest feedback technique is to apply, in addition to some constant torque, 
+    a correction torque proportional to the difference in phase $\phi$ between the motor and the reference oscillator. 
+    if you do this, you will find that, in the steady state, the motor and reference oscillator will be synchronized. 
+    the steady-state phase lag $\Delta \phi$ is given by
+    $$
+    \Delta \phi = \frac{\epsilon}{\alpha}
+    $$
+    where
+    <ul>
+      <li>
+        $\epsilon$ is the fractional error of the constant torque from the ideal torque. 
+        i.e. if you want to synchronize the motor with a 100 Hz oscillator and 
+        you apply a constant torque that results in a motor speed of 99 Hz, 
+        then we have $\epsilon = \frac{100-99}{100} = 1\%$.
+      </li>
+      <li>
+        $\alpha$ is the fraction of the ideal torque applied as a correction torque when the phase error is 1 radian.
+      </li>
+    </ul>
+    before continuing on to a more detailed discussion, it is worth stopping to point out that 
+    what the feedback loop accomplishes here is rather remarkable. 
+    the feedback loop converts 
+    <ul>
+      <li>
+        an error in the applied torque, which, if left uncorrected, would lead to an <i>unbounded</i> error in the phase lag $\phi$, to 
+      </li>
+      <li>
+        a <i>fixed</i> phase lag $\Delta \phi$.
+      </li>
+    </ul>
+    put otherwise, the feedback loop <i>completely eliminates</i> the finite frequency error created by the deviation of the constant applied torque
+    this result is reasonable. 
+    the feedback loop "tries to" keep the phases of the motor and reference oscillator equal. 
+    the loop is able to do this to the extent that 
+    <ul>
+      <li>
+        the constant torque roughly matches the ideal torque (i.e. $\epsilon$ is small), and       
+      </li>
+      <li>
+        the feedback is strong (i.e. $\alpha$ is large)
+      </li>
+    </ul>    
+    note that, even if the steady-state phase lag $\Delta \phi$ is large, the motor and oscillator are still <i>synchronized</i>, 
+    i.e. in the steady state there is a definite fixed phase relationship between the motor and oscillator.     
+    in this sense even an infinitessimally small amount of feedback $\alpha$ will in principle produce synchronization. 
+    however, a small $\Delta \phi$ is desirable since it will reduce our sensitivity to changes in $\epsilon$. 
+    you can imagine, for example, that as the motor heats up, the constant torque applied to the motor may drift even if the current applied 
+    to the motor windings remains perfecty constant. 
+    if $\alpha$ is too small, then a small change in $\epsilon$ may produce a large change in the steady-state phase lag $\Delta \phi$. 
+    <br><br>
+    is there then any reason why we should not make $\alpha$ as large as possible? 
+    to answer this question, we point it is necessary to understand how the <i>response time</i> $\tau$ (i.e. the time required to reach steady-state) 
+    of the feedback loop depends on $\alpha$:    
+    $$
+    \tau = \frac{\tau_o}{1- \frac{\Delta T}{T} \alpha}
+    $$
+    where:
+    <ul>
+      <li>
+        $\tau_o$ is the decay time of the undriven motor, i.e. the time it takes for the friction to reduce the motor speed by some significant factor, and
+      </li>
+      <li>
+        $2 \pi T$ is the period of oscillation of the reference oscillator, and 
+      </li>
+      <li>
+        $\Delta T$ is the delay between the measurement of the phase lag $\phi$ and the application of the corresponding correction torque. 
+        we can call this the "short-circuit" response time of the feedback loop, since it is a property of the feedback loop which is 
+        independent of the mechanical response of the motor.
+      </li>
+    </ul>
+    so we see that if the short-circuit feedback loop response is instantaneous, then the steady-state phase lage $\Delta \phi$ 
+    can be made as small as desired by increasing $\alpha$ without any influence on the time required to reach steady-state.
+    however, if $\Delta T$ is finite, then the feedback loop will respond more slowly as the feedback $\alpha$ is made stronger. 
+    in fact, if the feedback is strong enough so that $\frac{\Delta T}{T} \alpha \gt 1$, then the feedback loop becomes <i>unstable</i> 
+    and the phase lag $\phi$ will <i>diverge</i> instead of stabilizing to $\Delta \phi$. 
+    so we see in this simple example that there is a tradeoff between the power of a feedback loop and its stability.
+    in addition we see that the analysis reveals that in order for a feedback loop to perform well it is (unsurprisingly) helpful 
+    for the short-circuit response time $\Delta T$ of the feedback loop to be short and the oscillation period $T$ to be long. 
+    <br><br>
+    in our case we expect to receive updates on the phase lag $\phi$ every oscillation period, so that $\Delta T = T$. 
+    our expression for the response time $\tau$ simplifies to
+    $$
+    \tau = \frac{\tau_o}{1 - \alpha}
+    $$
+    <h3>notes</h3>
+    the results presented above are based on a simple mechanical model for the (open-loop) motor rotation:
+    $$
+    I \ddot{\theta} + 2 \frac{I}{\tau_o} \dot{\theta} = f
+    $$
+    where $\theta(t)$ is the phase of the motor at a time $t$, $I$ is the moment of inertia of the motor, and $f$ the torque applied. 
+    for constant applied torque $f$ it is easy to check that we obtain a steady state rotation speed of $\omega = \frac{\tau_o}{2 I} f$. 
+    the ideal torque to synchronize the motor with an oscillator oscillating at a rate $\omega_o$ is then $f_o = 2 \frac{I}{\tau_o} \omega_o$. 
+    the phase lag $\phi(t)$ is simply $\theta(t) - \omega_o t$ so the correction torque is $\alpha f_o \phi(t-\Delta T)$. 
+    the results obtained above follow from the approximation $\phi(t - \Delta T) \approx \phi(t) - \Delta T \dot{\phi}(t)$. 
+    this is a good approximation so long as $\Delta T$ is short.
+    <br><br>
+    for completeness I mention that the evolution of the phase lag $\phi$ to the steady-state phase lag $\Delta \phi$ is actually a damped oscillation 
+    about $\Delta \phi$. 
+    the oscillations damp with a decay time $\tau$ (as mentioned), and the (undamped) oscillation period is given by $\sqrt{\frac{T \tau_o}{2 \alpha}}$.    
+  </body>
+</html>

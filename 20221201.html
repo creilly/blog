@@ -1,0 +1,110 @@
+<html>
+  <head>
+    <title>Chris Reilly's EPFL blog</title>
+    <link rel="icon" type="image/png" href="/epfl/icon.png">
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async>
+      MathJax.Hub.Config({
+        tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+        TeX: {
+          Macros: {
+            bm: ["{\\boldsymbol #1}",1],
+            iso: ["{}^{#1}\\text{#2}",2],
+            oxy: ["\\iso{#1}{O}",1],
+            oxya: ["\\iso{18}{O}"],
+            oxyb: ["\\iso{16}{O}"],
+            hyd: ["\\text{H}"],
+            watera: ["\\hyd_2\\iso{18}{O}"],
+            waterb: ["\\hyd_2\\iso{16}{O}"],
+            oha: ["\\oxy{18}\\hyd"],
+            ohb: ["\\oxy{16}\\hyd"],
+            paira: ["\\oha\\ohb"],
+            pairb: ["\\ohb\\ohb"],
+            conc: ["\\left[ {#1} \\right]",1]
+          },
+          equationNumbers: { autoNumber: "AMS" }
+        }
+      });      
+    </script>
+  </head>
+  <body style="max-width: 700px; margin: 50; line-height: 2.0;">
+    <h1>2022.12.01 &mdash; simple model for <sup>18</sup>O &rarr; <sup>16</sup>O substitution</h1>
+    consider an $\oxya$-precovered surface with an influx of $\waterb$. 
+    
+    a simple model to describe the rise and decay of the $\oha$ RAIRS signal consists of the following processes:
+    <ol>
+      <li>
+        the reaction of an impinging $\waterb$ with a surface $\oxya$ to produce a pair $\paira$ on the surface.
+      </li>
+      <li>
+        the "disproportionation" of $\paira$ surface pair, which leads to either:
+        <ol type="a">
+          <li>
+            the desorption of a $\waterb$ molecule and a surface $\oxya$ atom, or
+          </li>
+          <li>
+            the desorption of a $\watera$ molecule and a surface $\oxyb$ atom.
+          </li>          
+        </ol>
+      </li>
+      <li>
+        the reaction of an impinging $\waterb$ with a surface $\oxyb$ to produce a pair $\pairb$ on the surface.
+      </li>
+      <li>
+        the disproportionation of a $\pairb$ surface pair, leading to the desorption of a $\waterb$ molecule and a surface $\oxyb$ atom.
+      </li>
+    </ol>    
+    Assigning $k$ as the disproportionation reaction rate constant, and $f$ for the $\waterb$ flux, we obtain the following set of differential equations governing the reaction dynamics:    
+    \begin{align}
+    & \frac{d}{dt}\conc{\oxya}    & = & -f\conc{\oxya}               &                      & +\frac{k}{2} \conc{\paira}             &                   \\
+    & \frac{d}{dt}\conc{\oxyb}    & = &                              & -f\conc{\oxyb}       & +\frac{k}{2} \conc{\paira}             & +k\conc{\pairb}   \\
+    & \frac{d}{dt}\conc{\paira}   & = & +f\conc{\oxya}               &                      & -k \conc{\paira}                         &                   \\
+    & \frac{d}{dt}\conc{\pairb}   & = &                              & +f\conc{\oxyb}       &                                          & -k\conc{\pairb}  \\
+    \end{align}
+    or, in matrix form:
+    \begin{equation}
+    \frac{d}{dt}
+    \underbrace{
+      \begin{bmatrix}
+      \conc{\oxya} \\ \conc{\oxyb} \\ \conc{\paira} \\ \conc{\pairb}
+      \end{bmatrix} 
+    }_{\bm{c}}
+    = 
+    \underbrace{
+      \begin{bmatrix}
+      -f &    & +\frac{k}{2} &        \\
+         & -f & +\frac{k}{2} & +k     \\
+      +f &    & -k           &        \\
+         & +f &              & -k     \\
+      \end{bmatrix} 
+    }_{M}    
+    \begin{bmatrix}
+    \conc{\oxya} \\ \conc{\oxyb} \\ \conc{\paira} \\ \conc{\pairb}
+    \end{bmatrix} 
+    \end{equation}
+    or, symbolically:
+    \begin{equation}
+    \dot{\bm{c}} = M \bm{c}
+    \end{equation}
+    given some initial surface coverage condition $\bm{c_o} = (c_1^o,c_2^o,c_3^o,c_4^o)$ and a time $t_o$, the coverages $c'_i$ at a later time $t' = t_o + T$ are given by:
+    \begin{equation}
+    c'_i = \sum_{j,k=1}^4 S_{ij}e^{\lambda_j T}S^{-1}_{jk}c^o_k
+    \end{equation}
+    where $S_{ij}$ and $\lambda_i$ is the eigenvector decomposition of $M$ in the following sense:
+    \begin{equation}
+    \sum_{k=1}^4 M_{ik} S_{kj} = S_{ij} \lambda_j
+    \end{equation}
+    for $i,j = 1,2,3,4$.
+    as an example, I plot below the time evolution of the surface coverages assuming $f=1$ and $k=2$ and initial surface coverages of $c_1^o = \conc{\oxya}(t=t_o) = 1$, $c_2^o=c_3^o=c_4^o=0$:
+    <figure style="width:800px">
+      <img src="20221201-plot.svg" style="align:center" width="750px">
+      <figcaption>
+        <b>above:</b> model predictions for a surface with an initial precoverage of $\oxya$. 
+        in addition to the coverages, we plot also the expected RAIRS signal for the $\oha$ (blue) and $\ohb$ (red) stretches. 
+        the $\oha$ RAIRS signal is presumed to be proportional to $\conc{\paira}$, 
+        while the $\ohb$ RAIRS signal is presumed to be proportional to $\conc{\paira} + 2 \conc{\pairb}$. 
+        the python code used to calculate and plot these results can be found at <a href="20221201-model.py">here</a>. 
+        the code can easily be adapted to investigate the model for arbitrary values of $k$ and $f$.
+      </figcaption>
+    </figure>
+  </body>
+</html>

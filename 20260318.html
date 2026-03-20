@@ -1,0 +1,423 @@
+<!doctype html>
+<html>
+  <head>
+    <title>physics blog</title>    
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+    />
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"
+    ></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+      onload="
+        renderMathInElement(document.body, {
+          delimiters: [
+            { left: '$$', right: '$$', display: true },
+            { left: '$', right: '$', inline: true },
+          ],
+        })
+      "
+    ></script>
+  <link rel="stylesheet" href="style.css" />
+  <script defer src="main.js"></script>
+  </head>
+  <body>
+  <button id="dm" title="Toggle dark mode">&#9681;</button>
+    <h1>2026.03.18 &mdash; the molecular symmetry group and inversion parity</h1>
+    <div class="abstract">      
+      While thinking about the proper context for presenting your results, I stumbled upon a way in which our problem "decomposes" into two parts:      
+      <ol>
+        <li>
+          a general result linking inversion parity and $H$ irreps for scattering mediated by "local" operators, and 
+        </li>
+        <li>
+          a specific result, building on the first, about scattering between $H$-irreps when the local scattering operator additionally commutes with the $F$ action.
+        </li>
+      </ol>      
+      The first purpose of this post is to present a proof of the first result. 
+      The second purpose is to discuss the different merits our two approaches. 
+      Ultimately I conclude that your proof is preferable as it avoids an unnecessary detour through an inversion parity classification via the induced representation. 
+    </div>
+    <h2>Defined symbols</h2>
+    Though all symbols are defined in the main body text, for reference we briefly restate the definitions of the symbols appearing in this post: 
+    <ul style="display: grid; row-gap: 0.8em;">
+      <li>
+        $G \equiv P \times G_+$, i.e. the group product of the groups $P$ and $G_+$, defined below. 
+        We infrequently let $G$ refer to a general abstract group. 
+      </li>
+      <li>
+        $P \equiv (\pm 1, \times)$, the two element group formed by the integers $+1$ and $-1$ under multiplication. 
+      </li>
+      <li>
+        $G_+ \equiv \prod_{n=1}^N S_{M_n}$. 
+        $S_m$ defined below. 
+        Physically the $n$ corresponds to a particular species of nuclei (e.g. <sup>14</sup>N) appearing in the molecule, and $M_n$ corresponds to the number of times nucleus $n$ occurs in the molecule. 
+      </li>
+      <li>
+        $S_m$ is the group of permutations of $m$ objects. 
+      </li>
+      <li>
+        $H$ is a subgroup of $G$. 
+        Physically it corresponds to the molecule's "molecular symmetry group", comprised of the "feasible" permutation-inversions $(\pm 1, \sigma) \in G$. 
+      </li>
+      <li>
+        $H_+ = \{ (p,\sigma) \in H: p = +1 \}$ is the subgroup of $H$ comprised of just the pure permutations (i.e. no inversions $(-1,\sigma)$). 
+      </li>
+      <li>
+        $\lambda, \lambda'$ are irreducible representations (irreps) of $H$.
+      </li>
+      <li>
+        $\rho_H: H \to \text{End}\left(V\right)$ is a representation taking elements $h \in H$ and returning a unitary operator on the vector space $V$. 
+      </li>
+      <li>
+        $V$ is either the space of wavefunctions that are "local" in that they are closed under the action $\rho_H$ or some (oftentimes irreducible) subspace of this space. 
+      </li>
+      <li>
+        $\text{Ind}_H^G V \equiv \rho_G: G \to \tilde{V}$ is the $G$ representation induced by $\rho_H$ acting on the space $\tilde{V} \equiv \bigoplus^{[G:H]} V$ of "delocalized" vectors. 
+        The induced representation is defined in detail <a href="#indrep">below</a>.
+      </li> 
+      <li>
+        $[G:H]$ is the "<a href="https://en.wikipedia.org/wiki/Index_of_a_subgroup">index</a>" of the subgroup $H \sub G$. 
+        Physically it corresponds to the number of equivalent equilibrium configurations of the molecule.         
+      </li>
+      <li>
+        $\bar{\lambda} \equiv \lambda \otimes \text{alt}$ is the $H$-irrep obtained by "twisting" the $H$-irrep $\lambda$ so that if $\rho_H$ is a realization of $\lambda$ then $\bar{\rho}_H$ is a realization of $\bar{\lambda}$ given by $\bar{\rho}_H(\pm 1, \sigma) := \pm \rho_H(\pm 1, \sigma)$ for all $(\pm 1, \sigma) \in H$.
+      </li>
+      <li>
+        $\mathcal{H}: \tilde{V} \to \tilde{V}'$ is a linear map between two delocalized vector spaces $\tilde{V}$ and $\tilde{V}'$. 
+        Depending on the context this map will have certain properties, like invariance under $G_+$ operations. 
+        Not to be confused with the subgroup $H \sub G$. 
+        Physically corresponds to the Hamiltonian or scattering operator. 
+      </li>
+      <li>
+        $\mathcal{H}_i: V \to V$ is component $i$ of the "local" map $\mathcal{H}$, where $gH_1, \ldots, gH_i, \ldots, gH_{[G:H]}$ is some enumeration of the set of left cosets $G/H$, with $i_o$ designating the trivial coset $H$. 
+        For more details see <a href="#local">below</a>. 
+      </li>
+      <li>
+        $I \equiv (-1,e)$ is the element of $G$ corresponding to inversion. 
+      </li>
+      <li>
+        $\epsilon=\pm 1$ are the eigenvalues of the inversion operator $I$, and thus characterize the "inversion parity" of its eigenvectors. 
+      </li>
+      <li>
+        O(3) is the group of proper and improper rotations in three dimensions. 
+      </li>
+      <li>
+        SO(3) is the subgroup of O(3) comprised of only the proper rotations. 
+      </li>
+      <li>
+        $r^n_\phi \in SO(3)$ is a rotation about the axis $n$ by angle $\phi$. 
+      </li>
+      <li>
+        $j$ is a non-negative integer representing the unique SO(3)-irrep of dimension $d_j=2j + 1$. 
+      </li>
+      <li>
+        $m=-j,\ldots,j$ are integers enumerating a basis of the SO(3)-irrep $j$ that are eigenvectors under rotations $r^z_\phi$ by arbitrary $\phi$. 
+      </li>
+      <li>
+        $C_{\infty v}$ is the subgroup of O(3) of operations preserving the $z$-coordinate. 
+      </li>
+      <li>
+        $\Sigma^\pm, \Pi, \Delta, \Phi, \ldots$ are irreps of $C_{\infty v}$. 
+      </li>
+      <li>
+        $W \equiv \bigotimes_{n=1}^N \left( \mathbb{C}^{d_{i_n}}\right)^{\otimes M_n}$ is the vector space of nuclear spin states. 
+      </li>
+      <li>
+        $i_n$ is an non-negative integer or half-integer representing the nuclear spin of the $n$<sup>th</sup> species. 
+      </li>
+      <li>
+        $T \equiv \tilde{V} \otimes W$ is the space of unsymmetrized delocalized states, nuclear spin included. 
+      </li>
+      <li>
+        $T_S \sub T$ is the space of symmetrized delocalized states transforming irreducibly under $G$ with symmetry $\Lambda^+_o$ or $\Lambda^-_o$. 
+      </li>
+      <li>
+        $\Lambda^\pm_o$ are two distinguished 1-dimensional $G$-irreps specific to given molecule. 
+        Their definition is given <a href="#pauli">below</a>.
+      </li>
+      <li>
+        $\lambda^\pm_o$ are the restrictions of the $G$-irreps $\Lambda^\pm_o$ to the subgroup $H \in G$. 
+      </li>
+    </ul>
+    <h2>Setup</h2>
+    <p>
+      <i>
+        Note: apologies if at points I do not adhere to the notation/symbols we've established. 
+        I hope everything will be relatively clear nonetheless. 
+      </i>
+    </p>   
+    <p>
+      The route we will take is to first ignore the action of the group SO(3)<a class="fn" id="ref1">*</a> of rotations and see how far we can get. 
+      To this end, consider a subgroup $H$ of $G \equiv P \times G_+$ where $P \equiv \left(\pm 1, \times\right)$ and $G_+ \equiv \prod_{n=1}^N S_{M_n}$ where $S_m$ is the group of permutations of $m$ objects. 
+      The first lemma we will prove is:
+    </p>     
+    <p>
+      <b>Lemma 1:</b> 
+      Any local $G_+$-invariant map between the induced representations $\text{Ind}_H^G \lambda$ and $\text{Ind}_H^G \lambda'$ of two $H$ irreps $\lambda$ and $\lambda'$ where $\lambda \neq \bar{\lambda} \equiv \lambda \otimes \text{alt}$ is uniquely determined up to a scalar, and is trivial unless $\lambda' = \lambda$ or $\lambda' = \bar{\lambda}$. 
+    </p>
+    <p>
+      What is meant by the qualifier "local" will be clarified below. 
+    </p>
+    <p id="indrep">
+      In molecular physics we typically define the induced representation $\text{Ind}_H^G \rho_H \equiv \rho_G : G \to \text{End}(\tilde{V})$ of a representation $\rho_H: H \to \text{End}\left(V\right)$ of a subgroup $H \sub G$ to act on the space $\tilde{V} = \bigoplus^{[G:H]} V$ so that, given some selection $g_1,\ldots,g_{[G:H]}$ of left coset representatives, we have, given some $g \in G$, the following action on a $[G:H]$-tuple $\left(v_1,\ldots,v_{[G:H]}\right)\equiv \mathbf{v}$ of vectors $v_i \in V$:
+      $$
+      \left[\rho_G(g)\left(v_1,\ldots,v_{[G:H]}\right)\right]_i = \rho_H\left(h\right)v_{i'}
+      $$
+      where the coset index $i'$ and element $h \in H$ are uniquely defined by the equation
+      $$
+      g g_{i'} = g_i h
+      $$
+      <i>Aside:</i> this definition of the induced representation nicely mirrors the physical picture of $V$ corresponding to a space of wavefunctions whose support is localized to some "small" neighborhood of coordinates surrounding a (not necessarily unique) equilibrium geometry of the molecule. 
+      The neighborhood is small to the extent that one configuration of coordinates in the neighborhood can be joined to any other through some path with an energy barrier not exceeding some threshold. 
+      This neighborhood is closed under the "feasible" operations $h \in H$ but under operations $g \notin H$ coordinates are mapped to a different neighborhood surrounding one of the other equivalent equilibrium geometries, of which there are $[G:H]$ in total. 
+    </p>
+    <p id="local">
+      A linear map $\mathcal{H}: \text{Ind}_H^G \rho_H \to \text{Ind}_H^G \rho'_H$ (or, in shorthand, $\mathcal{H}: \tilde{V} \to \tilde{V}'$) for two $H$ representations $\rho_H: H \to \text{End}\left(V\right)$ and $\rho_H': H \to \text{End}\left(V'\right)$ is termed <i>local</i> if it decomposes into the direct sum $\bigoplus_{i=1}^{[G:H]} \mathcal{H}_i$ with $\mathcal{H_i}: V \to V'$ so that
+      $$
+      \mathcal{H}\left(\ldots,v_i,\ldots\right) = \left(\ldots,\mathcal{H}_i v_i,\ldots\right)
+      $$
+      Let us now specialize to $G = P \times G_+$. 
+      In this case we can always choose our coset representatives $g_i$ to be pure permutations, i.e. for each $i$ there is some $\sigma_i \in G_+$ so that $g_i = (+1,\sigma_i)$. 
+      Suppose further the constraint that $\mathcal{H}$, in addition to being local, is also $G_+$-invariant so that for any $\sigma \in G_+$ we have $\mathcal{H} \circ \rho_G\left(+1,\sigma\right) = \rho_G' \left(+1,\sigma\right) \circ \mathcal{H}$. 
+      For any such map $\mathcal{H}$ we then have $\mathcal{H}_i = \mathcal{H}_j$ for all $i,j=1,\ldots,[G:H]$. 
+      To see this we note the map $\rho_G(g_j \cdot g_i^{-1})$ has the property that $v'_j = v_i$ where 
+      $$
+      \rho_G(g_j \cdot g_i^{-1}) \mathbf{v}' = \mathbf{v}
+      $$
+      so that for any $v \in V$ we have
+      $$
+      \begin{align*}
+      \mathcal{H}_i v 
+      & = 
+      \left[ \mathcal{H} \left(\ldots,\underset{i-1}{0},\underset{i}{v},\underset{i+1}{0},\ldots\right) \right]_i
+      \\ 
+      & = 
+      \left[ \mathcal{H} \circ \rho_G\left(g_j \cdot g_i^{-1}\right) \left(\ldots,\underset{j-1}{0},\underset{j}{v},\underset{j+1}{0},\ldots\right) \right]_i
+      \\ 
+      & = 
+      \left[ \rho_G'\left(g_j \cdot g_i^{-1}\right) \circ \mathcal{H} \left(\ldots,\underset{j-1}{0},\underset{j}{v},\underset{j+1}{0},\ldots\right) \right]_i      
+      \\ 
+      & = 
+      \left[ \rho_G' \left(g_j \cdot g_i^{-1}\right) \left(\ldots,\underset{j-1}{0},\underset{j}{\mathcal{H}_j v},\underset{j+1}{0},\ldots\right) \right]_i
+      \\
+      & = \mathcal{H}_j v
+      \end{align*} 
+      $$
+      so it suffices to therefore to characterize the component $\mathcal{H}_{i_o} \equiv \mathcal{H}_o$ associated with the trivial coset $H$ of index $i_o$, for which one has that for any $h \in H$
+      $$
+      \left[\rho_G(h) \mathbf{v}\right]_{i_o} = \rho_H(h) v_{i_o}
+      $$
+      so that for any $h_+ \in H_+ \equiv H \cap \{ (+1,\sigma) : \sigma \in G_+ \}$ and $v \in V$:
+      $$
+      \begin{align*}
+      \mathcal{H}_o \rho_H\left(h_+\right) v
+      & = 
+      \left[ \mathcal{H} \left(\ldots,\underset{i_o}{\rho_H\left(h_+\right) v},\ldots\right) \right]_{i_o} 
+      \\ & = 
+      \left[ \mathcal{H} \rho_G\left(h_+\right) \left(\ldots,\underset{i_o}{v},\ldots\right) \right]_{i_o} 
+      \\ & = 
+      \left[ \rho_G'\left(h_+\right) \mathcal{H} \left(\ldots,\underset{i_o}{v},\ldots\right) \right]_{i_o} 
+      \\ & = 
+      \left[ \rho_G'\left(h_+\right) \left(\ldots, \underset{i_o}{\mathcal{H}_o v},\ldots\right) \right]_{i_o} 
+      \\ & = 
+      \rho_H'\left(h_+\right) \mathcal{H}_o v
+      \end{align*}
+      $$
+      so $\mathcal{H}_o$ is $H_+$-invariant. 
+      Now if we restrict to the case where the representations $\rho_H \equiv \lambda$ and $\rho_H' \equiv \lambda'$ are $H$-irreps, then the restriction $\lambda_+$ of $\lambda$ to $H_+$ is irreducible as an $H_+$ representation just if $\lambda \neq \bar{\lambda}$. 
+      In this case, by Schur's lemma $\mathcal{H}_o$ can only be non-zero if restriction $\lambda'_+$ contains $\lambda_+$, which only occurs if $\lambda' = \lambda$ or $\lambda' = \bar{\lambda}$, in which case $\lambda_+ = \lambda_+'$. 
+      Moreover, when $\lambda_+ = \lambda'_+$ then, again by Schur's lemma, $\mathcal{H}_o$ is uniquely determined up to a constant scalar, thus establishing the lemma.
+    </p>
+    <h2>Parity locking</h2>
+    <p>
+      We can however go a step further. 
+      If $\lambda' = \lambda$, then by Schur's lemma there exists some non-trivial $H$-invariant map $\phi: V \to V'$ that is unique within a scaling factor. 
+      But that means $\phi$ is also $H_+$-invariant, making it thus proportional to $\mathcal{H}_o$ which in turns implies that $\mathcal{H}_o$ is itself $H$-invariant, which in turn implies that $\mathcal{H}$ commutes with the entire $G$ action, i.e. $\rho_G'(g)\mathcal{H} = \mathcal{H} \rho_G(g)$ for all $g \in G$. 
+      In particular $\mathcal{H}$ commutes with the inversion, i.e. the element $I \equiv (-1,e) \in G$, so that a "delocalized" vector $\mathbf{v} \in \tilde{V}$ of definite parity $\epsilon = \pm 1$ under $\rho_H(I)$ maps under $\mathcal{H}$ to a delocalized vector $\mathbf{v}' \in \tilde{V}'$ of the same parity $\epsilon$ under $\rho_H'(I)$. 
+      So the constraint of $G_+$-invariance combined with the constraints of locality and $\lambda \neq \bar{\lambda}$ leads to <i>conservation of parity $\epsilon$</i>, even though nothing was assumed concerning its behavior of $\mathcal{H}$ under permutation-inversions $(-1,\sigma) \in G$. 
+    </p>
+    <p>
+      When $\lambda' = \bar{\lambda}$, we can again use Schur's lemma, this time to show that $\mathcal{H}$ <i>anti-commutes</i> under permutation-iversions. 
+      To do this, we generate from the $H$-irrep $\rho_H \cong \lambda$ acting on $V$ an $H$-irrep $\bar{\rho}_H$ of symmetry $\bar{\lambda}$ on $V$ by the rule $\bar{\rho}_H(p,\sigma) := p\rho_H(p,\sigma)$. 
+      By Schur's lemma, there is then a map $\bar{\phi}: V \to V'$, unique within a scalar, with the property $\bar{\phi} \bar{\rho}_H(h) = \rho_H'(h) \bar{\phi}$ for all $h \in H$. 
+      Applying the same reasoning from the $\lambda' = \lambda$ case, we deduce that $\mathcal{H}_o \bar{\rho}_H(h) = \rho_H'(h) \mathcal{H}_o$ for all $h \in H$, or 
+      $$
+      \mathcal{H}_o \rho_H(p,\sigma) = p \rho_H'(p,\sigma) \mathcal{H}_o
+      $$
+      So that for the $G$-actions we have 
+      $$
+      \mathcal{H} \rho_G(p,\sigma) = p \rho_G'(p,\sigma) \mathcal{H}
+      $$
+      This means that a delocalized vector $\mathbf{v} \in \tilde{V}$ or parity $\epsilon$ under $\rho_G(I)$ maps under $\mathcal{H}$ to a delocalized vector $\mathbf{v}' \in \tilde{V}'$ of necessarily <i>opposite</i> parity $-\epsilon$ under $\rho_G'(I)$. 
+    </p>
+    <p>
+      A critical detail that will be important for comparison with other discussion in the literature is the fact that the "parity locking" mechanism does not in general imply any correspondence between $\lambda$ and $\epsilon$. 
+      In general the induced representation $\tilde{V}$ will contain both delocalized vectors of postive parity and those of negative parity. 
+      Our results rather assert that for scattering mediated local $G_+$-invariant maps $\mathcal{H}$ this parity is conserved for scattering $\lambda \leftrightarrow \lambda$ and is flipped for $\lambda \leftrightarrow \bar{\lambda}$.       
+    </p>
+    <h2>
+      Reflection symmetry
+    </h2>
+    <p>
+      We now consider suppose an arbitrary vector space $V$ supports, in addition to an $H$-action $\rho_H$, an SO(3) action $\rho_R: SO(3) \to \text{End}\left(V\right)$ commuting with the $H$-action. 
+      We can therefore decompose the space $V$ into components $V_{j\lambda}$ that are $\text{SO}(3) \times H$-irreps of symmetry $\left(j, \lambda_n\right)$, where $j$ marks the SO(3)-irrep of dimension $d_j \equiv 2j+1$ and $\lambda$ marks an $H$-irrep of dimension $d_\lambda$. 
+    </p>
+    <p>
+      We can classify delocalized vectors in $\text{Ind}_H^G V_{j \lambda} \equiv \tilde{V}_{j \lambda} \sub \tilde{V}$ by an integer $m=-j,\ldots,j$ and parity $\epsilon = \pm 1$ so that $\tilde{V}_{j\lambda}$ decomposes into group of "multiplets" $\{\mathbf{v}_{m \epsilon} : m=-j,\ldots,j\}$ of $d_j$ all with the same inversion parity $\epsilon$ and transforming irreducibly under SO(3). 
+      We additionally impose the constraint that under rotations $r^z_\phi \in SO(3)$ by an angle $\phi$ about the $z$-axis we have $\mathbf{v}_{m\epsilon} \overset{r_\phi^z}{\to} e^{-im\phi} \mathbf{v}_{m\epsilon}$. 
+    </p>
+    <p>
+      Now we finally consider scattering by a $G_+$-invariant local map $\mathcal{H}$ that is additionally invariant under the subgroup $C_{\infty v} \sub O(3) \cong P \times SO(3)$ of proper and improper rotations preserving the $z$-coordinate. 
+      As we know:
+      $$
+      C_{\infty v} = \{(+1,r^z_\phi):\phi \in (0,2\pi) \} \cup \{(-1,r^n_\pi r^z_\phi):\phi \in (0,2\pi) \}
+      $$
+      where $n$ is any axis perpendicular to the $z$ axis. 
+      It is evident that the multiplets $\mathbf{v}_{m\epsilon}$ form (generally reducible) representations of $C_{\infty v}$ since they are eigenvectors under inversion and transform irreducibly under all rotations. 
+      Also by noting that since $n \perp z$ we have $r^z_\phi r^n_\pi = r^n_\pi r^z_{-\phi}$ which implies that 
+      $$
+      \mathbf{z}_{m\epsilon} \overset{(-1,r^n_\pi r^z_\phi)}{\to} e^{i\theta} \mathbf{z}_{-m\epsilon}
+      $$
+      for some phase factor $\theta \in \mathbb{R}$ that depends in general on the choice of basis. 
+      For $m=0$ this phase factor is fixed:
+      $$
+      r^n_\phi \mathbf{v}_{0\epsilon} = (-1)^j \mathbf{v}_{0\epsilon}
+      $$
+      so 
+      $$
+      \mathbf{v}_{0\epsilon} \overset{(-1,r^n_\pi r^z_\phi)}{\to} \epsilon(-1)^j \mathbf{v}_{0\epsilon}
+      $$
+      This is enough to work out the <a href="https://en.wikipedia.org/wiki/Symmetry_of_diatomic_molecules#Point_groups_for_diatomic_molecules">$C_{\infty v}$ classification</a> of the $\mathbf{v}_{m\epsilon}$. 
+      The states $\mathbf{v}_{0\epsilon}$ are irreducible under $C_{\infty v}$ with symmetry $\Sigma^{\delta}$ where $\delta = \epsilon(-1)^j$, while the $m=0$ irreps of equal $|m|$ pair up to form two-dimensional $C_{\infty v}$-irreps of symmetry $\Pi, \Delta, \Phi, \ldots$ for $|m| = 1, 2, 3. \ldots$. 
+    </p>
+    <p>
+      Since $\mathcal{H}$ is $C_{\infty v}$-invariant, scattering from a $j=0$ representation of pure $C_{\infty v}$ symmetry $\Sigma^\epsilon$ to an even $j$ representation can only occur between delocalized states with the same inversion parity $\epsilon$, but our parity locking result <i>forbids</i> such transitions between delocalized states deriving from $H$-irreps $\lambda$ and $\bar{\lambda}$. 
+      Likewise, scattering from $j=0$ to an odd $j$ requires a change in inversion parity, which by parity locking is forbidden for transitions $\lambda \leftrightarrow \lambda$.  
+    </p>
+    <p>
+      There is however no symmetry selection rule forbidding transitions between two irreps with $j>0$, since both will necessarily contain at least one common 2-dimensional $C_{\infty v}$ irrep ($\Pi$, namely).  
+      You might object that, depending on $G$ and $H$, it is possible that $\text{Ind}_H^G \lambda \equiv \tilde{V}_\lambda$ and $\text{Ind}_H^G \bar{\lambda} \equiv \tilde{V}_{\bar{\lambda}}$ may both contain delocalized vectors of a single inversion parity $\epsilon$, in which case $\lambda \leftrightarrow \bar{\lambda}$ scattering can never occur. 
+      However, recalling that any $G_+$-invariant local map between two delocalized spaces deriving from $H$-irreps $\lambda$ and $\bar{\lambda}$ will anti-commute with inversion, it necessarily holds that the dimension of the space of delocalized vectors of parity $\epsilon$ in $\tilde{V}_\lambda$ is equal to the dimension of the space of delocalized vectors of parity $-\epsilon$ in $\tilde{V}_{\bar{\lambda}}$, so that there is always in principle channels "open" to $\lambda \leftrightarrow \bar{\lambda}$ scattering for the irreps $\Pi, \Delta, \Phi, \ldots$. 
+    </p>
+    <h2>Discussion</h2>
+    <p>
+      I think you'll find many similarities between your approach and the only taken here. 
+      One difference of course is that I derive a result for delocalized vectors in the induced representation, while you answer the question for the base spaces $\lambda$ directly. 
+      The truth is that the full Hilbert space of molecular wavefunctions is indeed the delocalized space $\tilde{V}$, but for scattering governed by local operators $\mathcal{H}$ we saw that it suffices to consider only the base Hilbert space $V$.       
+    </p>
+    <p>
+      As I mentioned, your approach avoids a what you have shown to be unnecessary detour through the induced representations. 
+      The one benefit of the induced representation approach is that seems to simplify the geometric analysis of the $C_{\infty v}$ symmetry through the use of the inversion parity classifier $\epsilon$. 
+      For a general $H \sub G$ we do not have $(-1,e) \in H$ so inversion parity is of course not a well-defined concept for local vectors $v \in V$. 
+      The beauty of your solution is in how you found a way around this obstruction. 
+    </p>
+    <p>
+      Now if the "parity-locking" result is well-known in molecular physics, it could be arguable that the best approach would be to cite it and apply it and restrict exposition to the geometric aspects addressed in the previous section. 
+      However, to the best of my knowledge no work exists in the field of molecule scattering that identifies the significance of parity-locking. 
+      As we do more research this may change, but for the time being I propose we plan to structure the article around your exposition. 
+      In the following sections I will try to summarize the results of my search through the literature, providing explanations where necessary. 
+    </p>
+    <h2>Nuclear spin and exchange symmetry</h2>
+    <p>
+      To understand the conventional approach to wavefunction parity classification, we must expand our local Hilbert space $V$ of local wavefunctions to the $V \otimes W$ including the space $W$ of nuclear spins. 
+      If the nuclei of species $n$ have a nuclear spin quantum number $i_n$, then the space of nuclear spins is 
+      $$
+      W = \bigotimes_{n=1}^N \left( \mathbb{C}^{d_{i_n}}\right)^{\otimes M_n}
+      $$
+      where $d_j = 2j + 1$ is the same as we defined before, except now we admit the possibility of both integer and half-integer nuclear spins $i_n$. 
+      The most abundant hydrogen isotope <sup>1</sup>H, i.e. a proton, has for example nuclear spin $i_{\text{H}} = 1/2$, thus making it a fermion, while the most abundant nitrogen isotope <sup>14</sup>N is a boson with integer spin $i_{\text{N}} = 1$. 
+    </p>    
+    <p>
+      There is a permutation action $G_+$ on $W$ that simply permutes the factors of a common species (represented by the index $n$).<a class="fn" id="ref2">*</a>
+      This $G_+$ action can be extended to $G$ by simply letting inversion act trivially, which of course then gives us an $H$ action as well, which we can group with the $H$ action on $V$ to get a $H$ action on $V \otimes W$. 
+      From $V \otimes W$ we can form $\text{Ind}_H^G \left( V \otimes W \right) \equiv T$, giving us the Hilbert space of "unsymmetrized" quantum states for the molecule. 
+      This space is equipped with a $G$-action defined by the induced representation. 
+      Equivalently we can think of the induced space $T$ as just $\tilde{V} \otimes W$ with the obvious $G$-action<a class="fn" id="ref-iso">*</a>. 
+    </p>
+    <p id="pauli">
+      The generalized Pauli principle<a class="fn" id="ref3">*</a> states that the true Hilbert space of quantum states is given by the subspace $T_S \sub T$ of "symmetrized states" of vectors $t \in T$ that are symmetric (antisymmetric) under an exchange of identical nuclei of integer (half-integer) spin, i.e. 
+      $$
+      \rho_{G}(+1,\sigma_n) t = (-1)^{2i_n} t
+      $$
+      Since the exchanges $\sigma_n$ generate the groups $S_{M_n}$ of permutations of the species $n$, vectors obeying the above equation are necessarily irreducible under $G_+$. 
+      Let's call this irrep $\Lambda_o$, and let's denote by $\Lambda^+_o$ and $\Lambda^-_o$ the associated $G$-irreps of positive and negative parity, respectively. 
+      The space $T_S$ can then be equivalently characterized as the subspace of $T$ spanned by the $G$-irreps $\Lambda^\pm_o$. 
+    </p>
+    <p>
+      A well-known result (if not often typically stated in these terms) is that the induced representation $\text{Ind}_H^G \left(\lambda_V \otimes \lambda_W\right)$, where $\lambda_V$ is an $H$-irrep in $V$ and $\lambda_W$ is an $H$-irrep in $W$, contains exactly one $\Lambda^\pm_o$ component if $\lambda_V = \lambda_W^* \otimes \lambda_o^\pm$, where $\lambda_o^\pm$ is the (irreducible) restriction of the $G$-irrep $\Lambda^\pm_o$ to $H$, and otherwise contains no $\Lambda^\pm_o$ component. 
+      An easy result, which I have not found elsewhere, is that if $\lambda_V \neq \bar{\lambda}_V$ then it also follows that if $\text{Ind}_H^G \left(\lambda_V \otimes \lambda_W\right)$ contains $\Lambda^\pm_o$ then it cannot contain $\Lambda^\mp_o$.       
+    </p>
+    <p>
+      Morever, as di Lauro points out in <a class="fn" id="ref-dilauro" nosup>*</a>, $\text{Ind}_H^G\left(\lambda_V \otimes \lambda_W\right)$ contains a component $\Lambda^\pm_o$ just if $\text{Ind}_H^G\left(\bar{\lambda}_V \otimes \lambda_W\right)$ contains $\Lambda^\mp_o$. 
+      Note that here, though Di Lauro does not state it, if we assume our scattering map $\mathcal{H}$ acts trivially on the $W$ component (often a good assumption), we immediately recover our parity locking. 
+    </p>
+    <p>
+      When I arrived at this result, I was quite surprised, since parity locking should not have anything to do with nuclear spin or constraints upon particle exchange. 
+      In other words, our result should hold even in a universe where $\tilde{V}$ was our true Hilbert space of quantum states. 
+      Indeed your proof indicates this is the case. 
+      This led me to work out the parity locking proof on $\tilde{V}$ that I present above. 
+    </p>
+    <p>
+      The main reference concerning there parity classification of molecular wavefunctions appears to be (Oka 1973) <a class="fn" id="ref-oka" nosup>*</a>. 
+      In the article he essentially makes the same observation as di Lauro, that when pairing $\lambda_V$ and $\bar{\lambda}_V$ to the same nuclear spin irrep $\lambda_W$ one obtains, as a consequence of the generalized Pauli principle, "total wavefunctions" (i.e. quantum states in $T_S$) of opposite inversion parity. 
+      I do not otherwise find anything in (Oka 1973) that resembling an enunciation of parity lockin.
+      I encourage you to look over the paper; you should have enough background now to follow along, and I would be curious what your opinions are concerning the work and its relevance to our project. 
+    </p>
+    <p>
+      Some further details on (Oka 1973) worth cataloguing here. 
+      First, Oka states that all the results covered in his article also appear in Landa and Lifshitz' quantum mechanics textbook <a class="fn" id="ref-ll" nosup>*</a>, and that his account is simply more streamlined. 
+      I reviewed the relevant chapter in L&L and did not find anything of the level of generality that our work is aimed at. 
+      Again I invite you to take a look yourself; the relevant section if Ch. XIII, §105. 
+    </p>
+    <p>
+      Another interesting detail is that Oka, in preparing the article, consulted with Herzberg, Bunker, and Hougen, who were at the time among the leading experts on molecular spectroscopy and symmetry. 
+      So if the parity locking result were well-known it seems strange that it would not make an appearance here, especially since Oka specializes in molecular scattering. 
+    </p>
+    <p>
+      One detail that Oka points out is that the non-coincidence of states of opposite inversion parity from the same product $\lambda_V \otimes \lambda_W$ does not and in general will not prevent the existence of states of opposite inversion parity deriving from the same $V$ factor $\lambda_V$. 
+      All that is required is a spin factor $\lambda_W' = \bar{\lambda}_W$. 
+      For species of sufficiently high nuclear spin $i_n$ and low multiplicity $M_n$ this is gauranteed to occur; for more on this refer to the <a href="https://en.wikipedia.org/wiki/Schur%E2%80%93Weyl_duality">Schur-Weyl duality</a>.       
+    </p>
+    <p>
+      This is important because many of the articles in the literature articulating selection rules similar to the ones we derive make use of the fact that for the molecules they were studying a unique inversion parity could be assigned to the delocalized wavefunctions deriving from some $\lambda \neq \bar{\lambda}$. 
+      See 10.1088/0022-3700/18/22/016, 10.1063/1.432640, 10.1063/1.466499. 
+      These articles then certainly do not recognize the generality of parity locking. 
+    </p>
+    <p>
+      Other studies also touch upon parity-driven scattering selection rules, but apply convoluted arguments that are specific to a small class of molecules (10.1063/1.455202, 10.1063/1.478462), again obscuring the general symmetry principles at play. 
+      One interesting example (10.1063/1.444037) derives selection rules without appealing to nuclear spin, but works out only the case $[G:H] = 2$, i.e. only two equilibrium frameworks relating by inversion. 
+      As molecules get larger, more rigid, and less symmetric, the number of equilibrium frameworks will increase. 
+      Even for the relatively small propyne molecule H<sub>3</sub>CC≡CH we have for instance $[G:H]=4$ equilibrium frameworks if we assume that the only feasible operations are exchanges of the H atoms within the "methyl moiety" CH<sub>3</sub>, along with possible inversion. 
+      Can you enumerate all the frameworks?
+    </p>
+    <hr class="endline">        
+    <section class="ref">
+      <p id="fn1">
+        For simplicity we will not discuss the extension to SU(2).
+      </p>
+      <p id="fn2">
+        There is also a SU(2) action on $W$ since each $\mathbb{C}^{d_{i_n}}$ factor carries its own canonical SU(2)-irrep, but this will not concern us. 
+      </p>      
+      <p id="fn3">
+        The generalized Pauli principle is ultimately a consequence of the fact that particles of a given species are just excitations of the same underlying quantum <i>field</i>. 
+      </p>            
+      <p id="fn-dilauro">
+        di Lauro, C.; Ch. 5 Nuclear Spin Statistical Weights. in <i>Rotational Structure in Molecular Infrared Spectra</i> 83-96 (Elsevier, 2020). doi:<a href="https://doi.org/10.1016/B978-0-12-821336-0.00005-5">10.1016/B978-0-12-821336-0.00005-5</a>.
+      </p>     
+      <p id="fn-ll">
+        Landau, L. D., Lifšic, E. M. & Landau, L. D. Quantum Mechanics: Non-Relativistic Theory. (Elsevier [u.a.], Singapore, 2007).        
+      </p>           
+      <p id="fn-oka">
+        Oka, T. <i>The parity of rotational levels</i>. Journal of Molecular Spectroscopy <b>48</b>, 503-507 (1973) <a href="https://doi.org/10.1016/0022-2852(73)90113-6">10.1016/0022-2852(73)90113-6</a>.
+      </p>                         
+      <p id="fn-iso">
+        Can you find the isomorphism making the actions commute?
+      </p>
+    </section>
+  </body>
+</html>
