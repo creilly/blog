@@ -54,6 +54,20 @@ body.dark hr {
   opacity: 0.75;
 }
 
+@media (max-width: 700px) {
+  #dm {
+    font-size: 24px;
+    top: 8px;
+    left: 12px;
+  }
+
+  #back-home {
+    font-size: 24px;
+    top: 8px;
+    left: 46px;
+  }
+}
+
 hr.endline {
     width: 30%; 
     margin: 2em 0; 
