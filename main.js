@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
   var btn = document.getElementById('dm');
   if (localStorage.getItem('dark') === '1') document.body.classList.add('dark');
+  initBackLink(btn);
   if (btn) {
     btn.addEventListener('click', function () {
       var on = document.body.classList.toggle('dark');
@@ -10,6 +11,27 @@ document.addEventListener('DOMContentLoaded', function () {
 
   initFootnotes();
 });
+
+function initBackLink(dmButton) {
+  if (document.getElementById('back-home')) return;
+
+  var path = window.location.pathname.toLowerCase();
+  if (path === '/' || path.endsWith('/index.php')) return;
+
+  var back = document.createElement('a');
+  back.id = 'back-home';
+  back.setAttribute('href', 'index.php');
+  back.setAttribute('title', 'Back to index');
+  back.setAttribute('aria-label', 'Back to index');
+  back.textContent = '\u2190\uFE0E';
+
+  if (dmButton && dmButton.parentNode) {
+    dmButton.insertAdjacentElement('afterend', back);
+    return;
+  }
+
+  document.body.appendChild(back);
+}
 
 function initFootnotes() {
   var refSection = document.querySelector('section.ref');
@@ -95,7 +117,7 @@ function setBacklink(p, targetId) {
   // Append a backlink arrow at the end of the note paragraph.
   var backlink = document.createElement('a');
   backlink.setAttribute('href', '#' + targetId);
-  backlink.textContent = '\u21A9';
+  backlink.textContent = '\u21A9\uFE0E';
 
   p.appendChild(document.createTextNode(' '));
   p.appendChild(backlink);

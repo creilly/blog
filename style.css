@@ -36,6 +36,24 @@ body.dark hr {
   color: inherit;
 }
 #dm:hover { opacity: 0.85; }
+
+#back-home {
+  position: fixed;
+  top: 10px;
+  left: 38px;
+  font-size: 18px;
+  opacity: 0.35;
+  color: inherit;
+  text-decoration: none;
+  line-height: 1;
+  transition: opacity 0.2s;
+}
+
+#back-home:hover,
+#back-home:focus {
+  opacity: 0.75;
+}
+
 hr.endline {
     width: 30%; 
     margin: 2em 0; 
