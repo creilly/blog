@@ -55,6 +55,11 @@ body.dark hr {
 }
 
 @media (max-width: 700px) {
+  body {
+    max-width: none;
+    margin: 16px;
+  }
+
   #dm {
     font-size: 24px;
     top: 8px;
