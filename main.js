@@ -95,7 +95,7 @@ function setBacklink(p, targetId) {
   // Append a backlink arrow at the end of the note paragraph.
   var backlink = document.createElement('a');
   backlink.setAttribute('href', '#' + targetId);
-  backlink.textContent = '↩';
+  backlink.textContent = '\u21A9';
 
   p.appendChild(document.createTextNode(' '));
   p.appendChild(backlink);
