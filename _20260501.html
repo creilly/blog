@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>physics blog</title>    
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+    />
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"
+    ></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+      onload="
+        renderMathInElement(document.body, {
+          delimiters: [
+            { left: '$$', right: '$$', display: true },
+            { left: '$', right: '$', inline: true },
+          ],
+        })
+      "
+    ></script>
+  <link rel="stylesheet" href="style.css" />
+  <script defer src="main.js"></script>
+  </head>
+  <body>
+  <button id="dm" title="Toggle dark mode">&#9681;</button>
+    <h1>2026.05.01 &mdash; interference interpretation of reflection parity conservation</h1>
+    <div class="abstract">      
+      In <a href="https://doi.org/10.1126/science.adu1023">10.1126/science.adu1023</a> we interpret our observation of certain forbidden scattering channels in terms of a quantum mechanical interference effect deriving from a reflection symmetry in the molecule-surface interaction. 
+      Here we generalize this interpretation to arbitrary molecules possessing nontrivial permutation-inversions in their molecular symmetry group. 
+    </div>    
+    <p>
+      If we first consider only the reduced geometric symmetry group $\text{SO}(2)$ consisting of proper rotations in the XY plane, then our overall dynamical symmetry group is just $\text{SO}(2) \times H_+,$ where $H_+$ is the group of feasible permutations. 
+      An irrep $(j,\lambda)$ of the group $\text{SO}(3) \times H$, where $H$ is the group of feasible permutation-inversions, splits into $\text{SO}(2) \times H_+$ irreps $(j,\lambda)_m$ where $m=-j,\ldots,j$ and $\lambda_+$ is an irreducible component of $\lambda$ in the restriction $H \to H_+$. 
+      Notably when $\lambda \neq \bar{\lambda} \equiv \lambda \otimes \text{alt}$ we have that $\lambda$ and $\bar{\lambda}$ are irreducible and equivalent as $H_+$ irreps, so in these cases we can simply write the components as $(j,\lambda)_m$. 
+      For the remainder of this post we consider for simplicity only this case $\lambda \neq \bar{\lambda}$. 
+    </p>
+    <p>
+      One of the main outcome of our representation theory investigation is that, while when $\lambda \neq \bar{\lambda}$ the irreducible components $(j,\lambda)_0$ and $(j',\bar{\lambda})_0$ are equivalent as $H_+$ irreps for any $j$, their behavior under a combined operation $r = (R_\pi,\sigma^*) \in SO(3) \times H / H_+$ consisting of a 180 degree rotation $R_\pi \in SO(3)$ about a plane containing the Z axis and a nontrivial permutation-inversion $\sigma^* \in H / H_+$ depends on the product $p=p_j p_\lambda$ of the parity $p_j = (-1)^j$ of $j$ and the parity $p_\lambda$ where $p_\lambda = +1$ and $p_{\bar{\lambda}} = -1$.<a class="fn" id="ref-arb">*</a>
+      This result permits us to classify the $m=0$ components by pairs $(\lambda,p)$ which we condense to $\lambda^\pm$. 
+      Specifically we have that if bases $\lambda^+_i$ and $\lambda^-_i$ for irreps $\lambda^+$ and $\lambda^-$ are chosen to have identical $\text{SO}(2) \times H_+$ matrix representations (which is possible since the two representations are identical as $\text{SO}(2) \times H_+$ irreps), then the matrix representations $\Gamma^\pm_{ij}$ of the $r$ action are just $\pm \Gamma_{ij}$ for some unitary matrix $\Gamma_{ij}$. 
+    </p>
+    <p>
+      Let us now take a pair of irreps $\lambda^+$ and $\lambda^-$ and form the $SO(2) \times H_+$ irreps $\lambda^l_i = \lambda^+_i + \lambda^-_i$ and $\lambda^r_i = \lambda^+_i - \lambda^-_i$. 
+      Under the action of $r$ we have $\lambda^l_i \to \sum_j \Gamma_{ji} \lambda^r_j$ and vice versa<a class="fn" id="ref-mirror">*</a>. 
+      If we assume that $r$ is a symmetry of our system then its associated (unitary) quantum mechanical operator $O_r$ commutes with the scattering operator $S$ transforming an incoming-state to its outgoing state. 
+    <p>
+    </p>
+      The operator commutativity in turn implies strong constraints on the scattering amplitudes from incoming states $\lambda^l_i$ and $\lambda^r_i$ to outgoing states $\phi_j^\pm$. 
+      We first note that the commutativity of $S$ under the symmetry group $\text{SO}(2) \times H_+$ implies via Schur's lemma that scattering can only occur between components $(j,\lambda)_m$ and $(j',\lambda')_{m'}$ when $m=m'$ and when $\lambda = \lambda'$ or $\lambda = \bar{\lambda}'$. 
+      Schur's lemma further implies that the scattering matrix is diagonal in the bases yielding identical $\text{SO}(2) \times H_+$ matrix representations, i.e. there is some complex scalar $s^\pm_l$ such that the inner product
+      $$
+      (S \lambda^l_i, \lambda'^\pm_j) = s^\pm_l \delta_{ij}
+      $$
+      independent of the indices $i$ and $j$. 
+      There an analogous scalar $s^\pm_r$ associated with $\lambda^r$. 
+      From here we can see that $s^\pm_l = \pm s^\pm_r$, since for any index $i$ we have
+      $$
+      \begin{split}
+      s^\pm_l & = 
+      (S \lambda^l_i, \lambda'^\pm_i)
+      \\
+      & = 
+      (O_r S \lambda^l_i, O_r \lambda'^\pm_i)
+      \\
+      & = 
+      (S O_r \lambda^l_i, O_r \lambda'^\pm_i)
+      \\
+      & = 
+      (S \sum_a \Gamma_{ai} \lambda^r_a, \pm \sum_b \Gamma_{bi} \lambda'^\pm_b)
+      \\
+      & = 
+      \pm \sum_{a,b} \Gamma_{ai} \Gamma^*_{bi} (S \lambda^r_a, \lambda'^\pm_b)
+      \\
+      & = 
+      \pm \sum_{a,b} \Gamma_{ai} \Gamma^*_{bi} s^\pm_r \delta_{ab}
+      \\
+      & = 
+      \pm \sum_{a} \Gamma_{ai} \Gamma^*_{ai} s^\pm_r
+      \\
+      & = 
+      \pm s^\pm_r
+      \end{split}
+      $$
+    </p>  
+    <p>
+      To simplify our notation, let's define $s_\pm \equiv s^\pm_l$ and fix some basis vector index $i$. 
+      Now we consider scattering from a superposition $\lambda_l + e^{i \phi} \lambda_r \equiv \lambda_\phi$ with arbitrary phase $\phi$ to some outgoing state $\lambda'^\pm$. 
+      By the superposition principle of quantum mechanics (i.e. by linearity of the inner product) we have:
+      $$
+      (S \lambda_\phi, \lambda'^\pm) = \left( 1 \pm e^{i\phi} \right) s_\pm \propto \begin{matrix} \cos \frac{\phi}{2} \\ \sin \frac{\phi}{2} \end{matrix}
+      $$
+      so that the nontrivial symmetry operation $r$ in combination with the principle of superposition gives rise to strong quantum mechanical interference conditions. 
+    </p>      
+    <hr class="endline">        
+    <section class="ref">
+      <p id="fn-arb">
+        The parity assignment $p_\lambda$ requires some arbitrary selection of a member from each pair $\lambda, \bar{\lambda}$. 
+        The results of course do not depend on the selection. 
+      </p>      
+      <p id="fn-mirror">
+        The irreps $\lambda^l$ and $\lambda^r$ are in this sense "mirror images" of one another, which is why we pick the superscripts $l$ and $r$ to stand for "left" and "right". 
+      </p>
+    </section>
+  </body>
+</html>
