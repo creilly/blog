@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>physics blog</title>    
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+    />
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"
+    ></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+      onload="
+        renderMathInElement(document.body, {
+          delimiters: [
+            { left: '$$', right: '$$', display: true },
+            { left: '$', right: '$', inline: true },
+          ],
+        })
+      "
+    ></script>
+  <link rel="stylesheet" href="style.css" />
+  <script defer src="main.js"></script>
+  </head>
+  <body class="toc">
+  <button id="dm" title="Toggle dark mode">&#9681;</button>
+    <h1>2026.05.02 &mdash; inversion parity and scattering selection rule</h1>
+    <div class="abstract">      
+      In this post we discuss why the analysis of the consequences of reflection symmetry in terms of the inversion parity of energy eigenstates that was used to derive selection rules for CH<sub>4</sub> does not generalize to arbitrary molecules, in that our more general analysis reveals selection rules between energy levels not predicted by the parity analysis. 
+    </div>    
+    <p>
+      In <a href="https://doi.org/10.1126/science.adu1023">10.1126/science.adu1023</a> we articulate a scattering selection rule based on the classification of the energy eigenstates by a triplet $(j,m,p)$ of quantum numbers consisting of the angular momentum $j$, the projection $m$ of the angular momentum onto the continuous symmetry axis, and the inversion parity $p$. 
+      Specifically we found that not only is scattering forbidden between states of unequal $m$, but that in addition for $m=0$ states there is a conservation of the state's "reflection parity" $(-1)^j p$. 
+      This implies that scattering to or from a $j=0$ energy level of inversion parity $p$ is only permitted for levels $(j',p')$ where $(-1)^{j'}p' = p$. 
+    </p>      
+    <p>
+      In general however the energy levels of a molecule are spanned by eigenstates of mixed inversion parity, in which case the conservation of reflection parity as formulated above does not lead to the prediction of strong scattering selection rules between energy levels. 
+      Such degeneracies can occur whenever inversion is not a "feasible" operation &mdash; that is, whenever any continuous path in configuration space connecting an equilibrium configuration to its inverted copy traverses a prohibitively large potential energy barrier. 
+      In this case by inverting any energy eigenfunction $\phi_l$ localized to one equilibrium framework we can generate a degenerate and orthogonal eigenfunction $\phi_r$ localized in the inverted framework. 
+      These eigenfunctions can be paired to construct degenerate energy eigenfunctions $\phi_\pm = \phi_l \pm \phi_r$ of opposite inversion parity. 
+    </p>
+    <p>
+      Indeed for CH<sub>4</sub> inversion is an infeasible operation, and it is only due to the specific structure the molecule's nuclear spin states that for some pairs $\phi_\pm$ only one inversion parity has a nonvanishing nuclear spin degeneracy, leading to energy levels spanned by "combined" (i.e. wavefunction and nuclear spin) states of a single inversion parity. 
+      Our more general analysis presented here however shows that reflection symmetry can still lead to complete suppression of scattering even between energy  levels containing combined states of both parities. 
+      For example, we find that the selection rules are completely unchanged after substituting the spin-1/2 hydrogen nuclei in CH<sub>4</sub> with spin-1 deuterons to form CD<sub>4</sub>. 
+      These rules predict for example suppression of scattering between certain energy levels of $T_d$ point group symmetry $F_1$ and $F_2$, despite the fact that for the deuterated species these levels turn out to have mixed inversion parity. 
+    </p>
+    <p>
+      The appropriate context for analyzing the implications of reflection symmetry on scattering turns out to be that of the molecule's "molecular symmetry group" consisting of the feasible combinations of inversion and permutation of identical nuclei. 
+      This context is convenient in that the energy levels of molecules are conventionally classified by the behavior of their eigenfunctions under the operations of molecular symmetry group, making application of our derived selection rules straightforward. 
+      Moreover, this classification is sufficient, since any observable that is both invariant under permutations of identical nuclei and "local" in that it does not couple distinct equilibrium frameworks is completely characterized by its action on wavefunctions spanning a single framework.<a class="fn" id="ref-inter">*</a>
+    </p>
+    <hr class="endline">        
+    <section class="ref">
+      <p id="fn-inter">
+        For example, no interference effects can occur between components localized in different equilibrium frameworks, as the condition of locality implies that the measurement probabilities, which are projections of a quantum state onto an operator eigenspace, reduce to <i>incoherent</i> averages over the different frameworks. 
+      </p>            
+    </section>
+  </body>
+</html>

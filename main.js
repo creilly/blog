@@ -9,8 +9,105 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  initToc();
   initFootnotes();
 });
+
+function initToc() {
+  if (!document.body.classList.contains('toc')) return;
+  if (document.getElementById('generated-toc')) return;
+
+  var h2s = Array.from(document.querySelectorAll('h2')).filter(function (h2) {
+    return h2.textContent && h2.textContent.trim();
+  });
+  if (!h2s.length) return;
+
+  var usedIds = new Set(
+    Array.from(document.querySelectorAll('[id]')).map(function (el) {
+      return el.id;
+    })
+  );
+
+  var nav = document.createElement('nav');
+  nav.id = 'generated-toc';
+  nav.setAttribute('aria-label', 'Table of contents');
+  nav.style.margin = '1.25em 0 1.5em';
+
+  var title = document.createElement('div');
+  title.textContent = 'Contents';
+  title.style.fontWeight = '600';
+  title.style.letterSpacing = '0.02em';
+  title.style.marginBottom = '0.5em';
+  nav.appendChild(title);
+
+  var list = document.createElement('ol');
+  list.style.margin = '0';
+  list.style.paddingLeft = '1.2em';
+  list.style.lineHeight = '1.45';
+
+  h2s.forEach(function (h2) {
+    if (!h2.id) {
+      h2.id = makeUniqueHeadingId(h2.textContent, usedIds);
+      usedIds.add(h2.id);
+    }
+
+    var li = document.createElement('li');
+    var a = document.createElement('a');
+    a.href = '#' + h2.id;
+    a.textContent = h2.textContent.trim();
+
+    li.appendChild(a);
+    list.appendChild(li);
+
+    addHeadingBackToTocLink(h2);
+  });
+
+  nav.appendChild(list);
+
+  var abstract = document.querySelector('div.abstract');
+  var h1 = document.querySelector('h1');
+
+  if (abstract && abstract.parentNode) {
+    abstract.insertAdjacentElement('afterend', nav);
+  } else if (h1 && h1.parentNode) {
+    h1.insertAdjacentElement('afterend', nav);
+  } else {
+    document.body.insertBefore(nav, document.body.firstChild);
+  }
+}
+
+function makeUniqueHeadingId(text, usedIds) {
+  var base = String(text || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-');
+
+  if (!base) base = 'section';
+  if (!usedIds.has(base)) return base;
+
+  var i = 2;
+  while (usedIds.has(base + '-' + i)) {
+    i += 1;
+  }
+  return base + '-' + i;
+}
+
+function addHeadingBackToTocLink(h2) {
+  if (!h2 || h2.querySelector('a.toc-back')) return;
+
+  var back = document.createElement('a');
+  back.className = 'toc-back';
+  back.href = '#generated-toc';
+  back.setAttribute('aria-label', 'Back to table of contents');
+  back.textContent = ' \u2191\uFE0E';
+  back.style.textDecoration = 'none';
+  back.style.fontSize = '0.85em';
+  back.style.marginLeft = '0.35em';
+  back.style.opacity = '0.8';
+
+  h2.appendChild(back);
+}
 
 function initBackLink(dmButton) {
   if (document.getElementById('back-home')) return;
